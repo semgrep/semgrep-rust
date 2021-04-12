@@ -23,13 +23,13 @@ type boolean_literal = [
 ]
 [@@deriving sexp_of]
 
-type tok_LT = Token.t
-[@@deriving sexp_of]
-
 type reserved_identifier = [
     `Defa of Token.t (* "default" *)
   | `Union of Token.t (* "union" *)
 ]
+[@@deriving sexp_of]
+
+type string_content = Token.t
 [@@deriving sexp_of]
 
 type anon_choice_PLUS_348fa54 = [
@@ -40,9 +40,6 @@ type anon_choice_PLUS_348fa54 = [
 [@@deriving sexp_of]
 
 type line_comment = Token.t
-[@@deriving sexp_of]
-
-type string_content = Token.t
 [@@deriving sexp_of]
 
 type identifier = Token.t
@@ -89,6 +86,9 @@ type fragment_specifier = [
 ]
 [@@deriving sexp_of]
 
+type tok_LT = Token.t
+[@@deriving sexp_of]
+
 type pat_36c5a8e = Token.t (* pattern "b?\"" *)
 [@@deriving sexp_of]
 
@@ -118,12 +118,6 @@ type string_literal = (
 )
 [@@deriving sexp_of]
 
-type lifetime = (Token.t (* "'" *) * identifier (*tok*))
-[@@deriving sexp_of]
-
-type loop_label = (Token.t (* "'" *) * identifier (*tok*))
-[@@deriving sexp_of]
-
 type simple_path = [
     `Self of Token.t (* "self" *)
   | `Choice_u8 of anon_choice_u8_6dad923
@@ -137,6 +131,12 @@ type simple_path = [
 and simple_scoped_identifier = (
     simple_path * Token.t (* "::" *) * identifier (*tok*)
 )
+[@@deriving sexp_of]
+
+type lifetime = (Token.t (* "'" *) * identifier (*tok*))
+[@@deriving sexp_of]
+
+type loop_label = (Token.t (* "'" *) * identifier (*tok*))
 [@@deriving sexp_of]
 
 type foreign_item_type = (
@@ -174,16 +174,6 @@ type literal_pattern = [
 ]
 [@@deriving sexp_of]
 
-type for_lifetimes = (
-    Token.t (* "for" *)
-  * Token.t (* "<" *)
-  * lifetime
-  * (Token.t (* "," *) * lifetime) list (* zero or more *)
-  * Token.t (* "," *) option
-  * Token.t (* ">" *)
-)
-[@@deriving sexp_of]
-
 type visibility_modifier = [
     `Crate of Token.t (* "crate" *)
   | `Pub_opt_LPAR_choice_self_RPAR of (
@@ -201,6 +191,16 @@ type visibility_modifier = [
           option
     )
 ]
+[@@deriving sexp_of]
+
+type for_lifetimes = (
+    Token.t (* "for" *)
+  * Token.t (* "<" *)
+  * lifetime
+  * (Token.t (* "," *) * lifetime) list (* zero or more *)
+  * Token.t (* "," *) option
+  * Token.t (* ">" *)
+)
 [@@deriving sexp_of]
 
 type function_modifiers =
@@ -1437,16 +1437,20 @@ type source_file = [
       * item list (* zero or more *)
     )
   | `Semg_exp of (Token.t (* "__SEMGREP_EXPRESSION" *) * expression)
+  | `Semg_stmt of (
+        Token.t (* "__SEMGREP_STATEMENT" *)
+      * statement list (* one or more *)
+    )
 ]
 [@@deriving sexp_of]
 
-type super (* inlined *) = Token.t (* "super" *)
-[@@deriving sexp_of]
-
-type unit_type (* inlined *) = (Token.t (* "(" *) * Token.t (* ")" *))
+type variadic_parameter (* inlined *) = Token.t (* "..." *)
 [@@deriving sexp_of]
 
 type unit_expression (* inlined *) = (Token.t (* "(" *) * Token.t (* ")" *))
+[@@deriving sexp_of]
+
+type super (* inlined *) = Token.t (* "super" *)
 [@@deriving sexp_of]
 
 type empty_statement (* inlined *) = Token.t (* ";" *)
@@ -1473,7 +1477,7 @@ type ellipsis (* inlined *) = Token.t (* "..." *)
 type empty_type (* inlined *) = Token.t (* "!" *)
 [@@deriving sexp_of]
 
-type variadic_parameter (* inlined *) = Token.t (* "..." *)
+type unit_type (* inlined *) = (Token.t (* "(" *) * Token.t (* ")" *))
 [@@deriving sexp_of]
 
 type field_identifier (* inlined *) = identifier (*tok*)
@@ -1511,6 +1515,17 @@ type extern_crate_declaration (* inlined *) = (
 )
 [@@deriving sexp_of]
 
+type use_as_clause (* inlined *) = (
+    simple_path * Token.t (* "as" *) * identifier (*tok*)
+)
+[@@deriving sexp_of]
+
+type use_wildcard (* inlined *) = (
+    (simple_path * Token.t (* "::" *)) option
+  * Token.t (* "*" *)
+)
+[@@deriving sexp_of]
+
 type self_parameter (* inlined *) = (
     Token.t (* "&" *) option
   * lifetime option
@@ -1522,17 +1537,6 @@ type self_parameter (* inlined *) = (
 type continue_expression (* inlined *) = (
     Token.t (* "continue" *)
   * loop_label option
-)
-[@@deriving sexp_of]
-
-type use_wildcard (* inlined *) = (
-    (simple_path * Token.t (* "::" *)) option
-  * Token.t (* "*" *)
-)
-[@@deriving sexp_of]
-
-type use_as_clause (* inlined *) = (
-    simple_path * Token.t (* "as" *) * identifier (*tok*)
 )
 [@@deriving sexp_of]
 
@@ -2028,6 +2032,12 @@ type while_let_expression (* inlined *) = (
   * Token.t (* "=" *)
   * expression
   * block
+)
+[@@deriving sexp_of]
+
+type semgrep_statement (* inlined *) = (
+    Token.t (* "__SEMGREP_STATEMENT" *)
+  * statement list (* one or more *)
 )
 [@@deriving sexp_of]
 

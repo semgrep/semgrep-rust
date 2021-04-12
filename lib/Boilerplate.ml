@@ -35,14 +35,14 @@ let map_boolean_literal (env : env) (x : CST.boolean_literal) =
   | `False tok -> token env tok (* "false" *)
   )
 
-let map_tok_LT (env : env) (tok : CST.tok_LT) =
-  token env tok (* tok_LT *)
-
 let map_reserved_identifier (env : env) (x : CST.reserved_identifier) =
   (match x with
   | `Defa tok -> token env tok (* "default" *)
   | `Union tok -> token env tok (* "union" *)
   )
+
+let map_string_content (env : env) (tok : CST.string_content) =
+  token env tok (* string_content *)
 
 let map_anon_choice_PLUS_348fa54 (env : env) (x : CST.anon_choice_PLUS_348fa54) =
   (match x with
@@ -53,9 +53,6 @@ let map_anon_choice_PLUS_348fa54 (env : env) (x : CST.anon_choice_PLUS_348fa54) 
 
 let map_line_comment (env : env) (tok : CST.line_comment) =
   token env tok (* line_comment *)
-
-let map_string_content (env : env) (tok : CST.string_content) =
-  token env tok (* string_content *)
 
 let map_identifier (env : env) (tok : CST.identifier) =
   token env tok (* identifier *)
@@ -101,6 +98,9 @@ let map_fragment_specifier (env : env) (x : CST.fragment_specifier) =
   | `Vis tok -> token env tok (* "vis" *)
   )
 
+let map_tok_LT (env : env) (tok : CST.tok_LT) =
+  token env tok (* tok_LT *)
+
 let map_pat_36c5a8e (env : env) (tok : CST.pat_36c5a8e) =
   token env tok (* pattern "b?\"" *)
 
@@ -132,16 +132,6 @@ let map_string_literal (env : env) ((v1, v2, v3) : CST.string_literal) =
   let v3 = token env v3 (* "\"" *) in
   todo env (v1, v2, v3)
 
-let map_lifetime (env : env) ((v1, v2) : CST.lifetime) =
-  let v1 = token env v1 (* "'" *) in
-  let v2 = token env v2 (* identifier *) in
-  todo env (v1, v2)
-
-let map_loop_label (env : env) ((v1, v2) : CST.loop_label) =
-  let v1 = token env v1 (* "'" *) in
-  let v2 = token env v2 (* identifier *) in
-  todo env (v1, v2)
-
 let rec map_simple_path (env : env) (x : CST.simple_path) =
   (match x with
   | `Self tok -> token env tok (* "self" *)
@@ -158,6 +148,16 @@ and map_simple_scoped_identifier (env : env) ((v1, v2, v3) : CST.simple_scoped_i
   let v2 = token env v2 (* "::" *) in
   let v3 = token env v3 (* identifier *) in
   todo env (v1, v2, v3)
+
+let map_lifetime (env : env) ((v1, v2) : CST.lifetime) =
+  let v1 = token env v1 (* "'" *) in
+  let v2 = token env v2 (* identifier *) in
+  todo env (v1, v2)
+
+let map_loop_label (env : env) ((v1, v2) : CST.loop_label) =
+  let v1 = token env v1 (* "'" *) in
+  let v2 = token env v2 (* identifier *) in
+  todo env (v1, v2)
 
 let map_foreign_item_type (env : env) ((v1, v2, v3) : CST.foreign_item_type) =
   let v1 = token env v1 (* "type" *) in
@@ -203,25 +203,6 @@ let map_literal_pattern (env : env) (x : CST.literal_pattern) =
       todo env (v1, v2)
   )
 
-let map_for_lifetimes (env : env) ((v1, v2, v3, v4, v5, v6) : CST.for_lifetimes) =
-  let v1 = token env v1 (* "for" *) in
-  let v2 = token env v2 (* "<" *) in
-  let v3 = map_lifetime env v3 in
-  let v4 =
-    List.map (fun (v1, v2) ->
-      let v1 = token env v1 (* "," *) in
-      let v2 = map_lifetime env v2 in
-      todo env (v1, v2)
-    ) v4
-  in
-  let v5 =
-    (match v5 with
-    | Some tok -> token env tok (* "," *)
-    | None -> todo env ())
-  in
-  let v6 = token env v6 (* ">" *) in
-  todo env (v1, v2, v3, v4, v5, v6)
-
 let map_visibility_modifier (env : env) (x : CST.visibility_modifier) =
   (match x with
   | `Crate tok -> token env tok (* "crate" *)
@@ -248,6 +229,25 @@ let map_visibility_modifier (env : env) (x : CST.visibility_modifier) =
       in
       todo env (v1, v2)
   )
+
+let map_for_lifetimes (env : env) ((v1, v2, v3, v4, v5, v6) : CST.for_lifetimes) =
+  let v1 = token env v1 (* "for" *) in
+  let v2 = token env v2 (* "<" *) in
+  let v3 = map_lifetime env v3 in
+  let v4 =
+    List.map (fun (v1, v2) ->
+      let v1 = token env v1 (* "," *) in
+      let v2 = map_lifetime env v2 in
+      todo env (v1, v2)
+    ) v4
+  in
+  let v5 =
+    (match v5 with
+    | Some tok -> token env tok (* "," *)
+    | None -> todo env ())
+  in
+  let v6 = token env v6 (* ">" *) in
+  todo env (v1, v2, v3, v4, v5, v6)
 
 let map_function_modifiers (env : env) (xs : CST.function_modifiers) =
   List.map (fun x ->
@@ -2427,5 +2427,9 @@ let map_source_file (env : env) (x : CST.source_file) =
   | `Semg_exp (v1, v2) ->
       let v1 = token env v1 (* "__SEMGREP_EXPRESSION" *) in
       let v2 = map_expression env v2 in
+      todo env (v1, v2)
+  | `Semg_stmt (v1, v2) ->
+      let v1 = token env v1 (* "__SEMGREP_STATEMENT" *) in
+      let v2 = List.map (map_statement env) v2 in
       todo env (v1, v2)
   )
