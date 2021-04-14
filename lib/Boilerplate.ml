@@ -107,8 +107,8 @@ let map_pat_36c5a8e (env : env) (tok : CST.pat_36c5a8e) =
 let map_integer_literal (env : env) (tok : CST.integer_literal) =
   token env tok (* integer_literal *)
 
-let map_pat_785a82e (env : env) (tok : CST.pat_785a82e) =
-  token env tok (* pattern [/_\-=->,;:::!=?.@*=/=&=#%=^=+<>|~]+ *)
+let map_pat_e14e5d5 (env : env) (tok : CST.pat_e14e5d5) =
+  token env tok (* pattern [\/_\-=->,;:::!=?.@*=\/=&=#%=^=+<>|~]+ *)
 
 let map_char_literal (env : env) (tok : CST.char_literal) =
   token env tok (* char_literal *)
@@ -270,8 +270,8 @@ let map_non_special_token (env : env) (x : CST.non_special_token) =
   | `Super tok -> token env tok (* "super" *)
   | `Crate tok -> token env tok (* "crate" *)
   | `Choice_u8 x -> map_anon_choice_u8_6dad923 env x
-  | `Pat_785a82e tok ->
-      token env tok (* pattern [/_\-=->,;:::!=?.@*=/=&=#%=^=+<>|~]+ *)
+  | `Pat_e14e5d5 tok ->
+      token env tok (* pattern [\/_\-=->,;:::!=?.@*=\/=&=#%=^=+<>|~]+ *)
   | `SQUOT tok -> token env tok (* "'" *)
   | `As tok -> token env tok (* "as" *)
   | `Async tok -> token env tok (* "async" *)
