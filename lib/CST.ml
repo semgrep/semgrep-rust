@@ -95,7 +95,8 @@ type pat_36c5a8e = Token.t (* pattern "b?\"" *)
 type integer_literal = Token.t
 [@@deriving sexp_of]
 
-type pat_785a82e = Token.t (* pattern [/_\-=->,;:::!=?.@*=/=&=#%=^=+<>|~]+ *)
+type pat_e14e5d5 =
+  Token.t (* pattern [\/_\-=->,;:::!=?.@*=\/=&=#%=^=+<>|~]+ *)
 [@@deriving sexp_of]
 
 type char_literal = Token.t
@@ -223,7 +224,7 @@ type non_special_token = [
   | `Super of Token.t (* "super" *)
   | `Crate of Token.t (* "crate" *)
   | `Choice_u8 of anon_choice_u8_6dad923
-  | `Pat_785a82e of pat_785a82e (*tok*)
+  | `Pat_e14e5d5 of pat_e14e5d5 (*tok*)
   | `SQUOT of Token.t (* "'" *)
   | `As of Token.t (* "as" *)
   | `Async of Token.t (* "async" *)
