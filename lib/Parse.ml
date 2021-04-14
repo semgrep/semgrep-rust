@@ -83,7 +83,7 @@ let children_regexps : (string * Run.exp option) list = [
   "mutable_specifier", None;
   "pat_36c5a8e", None;
   "empty_type", None;
-  "pat_e14e5d5", None;
+  "pat_785a82e", None;
   "escape_sequence", None;
   "empty_statement", None;
   "unit_type",
@@ -441,7 +441,7 @@ let children_regexps : (string * Run.exp option) list = [
               Token (Literal "str");
               Token (Literal "char");
             |];
-            Token (Name "pat_e14e5d5");
+            Token (Name "pat_785a82e");
             Token (Literal "'");
             Token (Literal "as");
             Token (Literal "async");
@@ -520,7 +520,7 @@ let children_regexps : (string * Run.exp option) list = [
                 Token (Literal "str");
                 Token (Literal "char");
               |];
-              Token (Name "pat_e14e5d5");
+              Token (Name "pat_785a82e");
               Token (Literal "'");
               Token (Literal "as");
               Token (Literal "async");
@@ -587,7 +587,7 @@ let children_regexps : (string * Run.exp option) list = [
                 Token (Literal "str");
                 Token (Literal "char");
               |];
-              Token (Name "pat_e14e5d5");
+              Token (Name "pat_785a82e");
               Token (Literal "'");
               Token (Literal "as");
               Token (Literal "async");
@@ -654,7 +654,7 @@ let children_regexps : (string * Run.exp option) list = [
                 Token (Literal "str");
                 Token (Literal "char");
               |];
-              Token (Name "pat_e14e5d5");
+              Token (Name "pat_785a82e");
               Token (Literal "'");
               Token (Literal "as");
               Token (Literal "async");
@@ -723,7 +723,7 @@ let children_regexps : (string * Run.exp option) list = [
           Token (Literal "str");
           Token (Literal "char");
         |];
-        Token (Name "pat_e14e5d5");
+        Token (Name "pat_785a82e");
         Token (Literal "'");
         Token (Literal "as");
         Token (Literal "async");
@@ -3405,7 +3405,7 @@ let trans_empty_type ((kind, body) : mt) : CST.empty_type =
   | Leaf v -> v
   | Children _ -> assert false
 
-let trans_pat_e14e5d5 ((kind, body) : mt) : CST.pat_e14e5d5 =
+let trans_pat_785a82e ((kind, body) : mt) : CST.pat_785a82e =
   match body with
   | Leaf v -> v
   | Children _ -> assert false
@@ -4411,8 +4411,8 @@ let rec trans_token_repetition ((kind, body) : mt) : CST.token_repetition =
                             )
                           )
                       | Alt (8, v) ->
-                          `Pat_e14e5d5 (
-                            trans_pat_e14e5d5 (Run.matcher_token v)
+                          `Pat_785a82e (
+                            trans_pat_785a82e (Run.matcher_token v)
                           )
                       | Alt (9, v) ->
                           `SQUOT (
@@ -4686,8 +4686,8 @@ and trans_token_tree ((kind, body) : mt) : CST.token_tree =
                                   )
                                 )
                             | Alt (8, v) ->
-                                `Pat_e14e5d5 (
-                                  trans_pat_e14e5d5 (Run.matcher_token v)
+                                `Pat_785a82e (
+                                  trans_pat_785a82e (Run.matcher_token v)
                                 )
                             | Alt (9, v) ->
                                 `SQUOT (
@@ -4937,8 +4937,8 @@ and trans_token_tree ((kind, body) : mt) : CST.token_tree =
                                   )
                                 )
                             | Alt (8, v) ->
-                                `Pat_e14e5d5 (
-                                  trans_pat_e14e5d5 (Run.matcher_token v)
+                                `Pat_785a82e (
+                                  trans_pat_785a82e (Run.matcher_token v)
                                 )
                             | Alt (9, v) ->
                                 `SQUOT (
@@ -5188,8 +5188,8 @@ and trans_token_tree ((kind, body) : mt) : CST.token_tree =
                                   )
                                 )
                             | Alt (8, v) ->
-                                `Pat_e14e5d5 (
-                                  trans_pat_e14e5d5 (Run.matcher_token v)
+                                `Pat_785a82e (
+                                  trans_pat_785a82e (Run.matcher_token v)
                                 )
                             | Alt (9, v) ->
                                 `SQUOT (
@@ -5443,8 +5443,8 @@ let rec trans_token_pattern ((kind, body) : mt) : CST.token_pattern =
                   )
                 )
             | Alt (8, v) ->
-                `Pat_e14e5d5 (
-                  trans_pat_e14e5d5 (Run.matcher_token v)
+                `Pat_785a82e (
+                  trans_pat_785a82e (Run.matcher_token v)
                 )
             | Alt (9, v) ->
                 `SQUOT (
