@@ -1,0 +1,28 @@
+File: semgrep-grammars/src/tree-sitter-rust/LICENSE
+Git repo name: ocaml-tree-sitter
+Last git commit:
+  commit 1eb8c0b3e19412ef8cc8e90e7d68dc7a7e809001
+  Author: Ruin0x11 <ipickering2@gmail.com>
+  Date:   Mon Feb 1 11:08:32 2021 -0800
+  
+      Make parsing simple path expressions simpler
+---
+File: semgrep-grammars/src/tree-sitter-rust/grammar.js
+Git repo name: ocaml-tree-sitter
+Last git commit:
+  commit 1eb8c0b3e19412ef8cc8e90e7d68dc7a7e809001
+  Author: Ruin0x11 <ipickering2@gmail.com>
+  Date:   Mon Feb 1 11:08:32 2021 -0800
+  
+      Make parsing simple path expressions simpler
+---
+File: semgrep-grammars/src/semgrep-rust/grammar.js
+Git repo name: ocaml-tree-sitter
+Last git commit:
+  commit 9bca49eafc8489bc0d508057079bec9b7d10f65e
+  Author: Martin Jambon <martin@returntocorp.com>
+  Date:   Wed Apr 14 16:44:28 2021 -0700
+  
+      Include new file 'fyi/versions' that tracks git info associated with
+      each file in the "FYI" list.
+---
