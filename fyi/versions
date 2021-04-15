@@ -1,15 +1,21 @@
 File: semgrep-grammars/src/tree-sitter-rust/LICENSE
-Git repo name: ocaml-tree-sitter
-Last git commit:
-  commit 1eb8c0b3e19412ef8cc8e90e7d68dc7a7e809001
-  Author: Ruin0x11 <ipickering2@gmail.com>
-  Date:   Mon Feb 1 11:08:32 2021 -0800
+Git repo name: tree-sitter-rust
+Latest commit in repo: 1eb8c0b3e19412ef8cc8e90e7d68dc7a7e809001
+Last change in file:
+  commit 79f3003ca601783a6cff3c03fce75523298d64fa
+  Author: Maxim Sokolov <maxim0xff@gmail.com>
+  Date:   Wed Mar 29 14:32:36 2017 +0300
   
-      Make parsing simple path expressions simpler
+      Init
+      
+      Based on
+      https://github.com/tree-sitter/tree-sitter-javascript
+      https://github.com/tree-sitter/tree-sitter-go
 ---
 File: semgrep-grammars/src/tree-sitter-rust/grammar.js
-Git repo name: ocaml-tree-sitter
-Last git commit:
+Git repo name: tree-sitter-rust
+Latest commit in repo: 1eb8c0b3e19412ef8cc8e90e7d68dc7a7e809001
+Last change in file:
   commit 1eb8c0b3e19412ef8cc8e90e7d68dc7a7e809001
   Author: Ruin0x11 <ipickering2@gmail.com>
   Date:   Mon Feb 1 11:08:32 2021 -0800
@@ -18,10 +24,11 @@ Last git commit:
 ---
 File: semgrep-grammars/src/semgrep-rust/grammar.js
 Git repo name: ocaml-tree-sitter
-Last git commit:
-  commit b1b6d3e7595b5368f61588db168fea32774b3f81
-  Author: Martin Jambon <martin@returntocorp.com>
-  Date:   Wed Apr 14 16:59:53 2021 -0700
+Latest commit in repo: f0469e1b59ee4df9d8cdded2a7d5cb124f3ea264
+Last change in file:
+  commit b9710f8f0fd19feadc361822aac9fec563cf9f7f
+  Author: Nils Amiet <nils.amiet@kudelskisecurity.com>
+  Date:   Fri Apr 9 10:39:56 2021 +0200
   
-      Add release file containing the tree-sitter version
+      semgrep-rust: Support top-level statements
 ---
