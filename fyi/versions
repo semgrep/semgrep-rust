@@ -1,30 +1,34 @@
 File: semgrep-grammars/src/tree-sitter-rust/LICENSE
 Git repo name: tree-sitter-rust
-Latest commit in repo: 1eb8c0b3e19412ef8cc8e90e7d68dc7a7e809001
+Latest commit in repo: 2beedf23bedbd7b02b416518693e8eed3944d4a0
 Last change in file:
-  commit 79f3003ca601783a6cff3c03fce75523298d64fa
-  Author: Maxim Sokolov <maxim0xff@gmail.com>
-  Date:   Wed Mar 29 14:32:36 2017 +0300
+  commit 2beedf23bedbd7b02b416518693e8eed3944d4a0
+  Author: Eric Shimizu Karbstein <gr41.j4ck@gmail.com>
+  Date:   Tue Jan 5 15:00:48 2021 -0300
   
-      Init
+      Add const block expression (#97)
       
-      Based on
-      https://github.com/tree-sitter/tree-sitter-javascript
-      https://github.com/tree-sitter/tree-sitter-go
+      * Add const block expression
+      
+      * Fix const block pattern test
 ---
 File: semgrep-grammars/src/tree-sitter-rust/grammar.js
 Git repo name: tree-sitter-rust
-Latest commit in repo: 1eb8c0b3e19412ef8cc8e90e7d68dc7a7e809001
+Latest commit in repo: 2beedf23bedbd7b02b416518693e8eed3944d4a0
 Last change in file:
-  commit 1eb8c0b3e19412ef8cc8e90e7d68dc7a7e809001
-  Author: Ruin0x11 <ipickering2@gmail.com>
-  Date:   Mon Feb 1 11:08:32 2021 -0800
+  commit 2beedf23bedbd7b02b416518693e8eed3944d4a0
+  Author: Eric Shimizu Karbstein <gr41.j4ck@gmail.com>
+  Date:   Tue Jan 5 15:00:48 2021 -0300
   
-      Make parsing simple path expressions simpler
+      Add const block expression (#97)
+      
+      * Add const block expression
+      
+      * Fix const block pattern test
 ---
 File: semgrep-grammars/src/semgrep-rust/grammar.js
-Git repo name: ocaml-tree-sitter
-Latest commit in repo: f0469e1b59ee4df9d8cdded2a7d5cb124f3ea264
+Git repo name: ocaml-tree-sitter-semgrep
+Latest commit in repo: f36e11bf5521a29e3d22d822c927c51dae9fe6c5
 Last change in file:
   commit b9710f8f0fd19feadc361822aac9fec563cf9f7f
   Author: Nils Amiet <nils.amiet@kudelskisecurity.com>
