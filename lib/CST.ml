@@ -95,7 +95,7 @@ type escape_sequence = Token.t
 type pat_36c5a8e = Token.t (* pattern "b?\"" *)
 [@@deriving sexp_of]
 
-type pat_785a82e = Token.t (* pattern [/_\-=->,;:::!=?.@*=/=&=#%=^=+<>|~]+ *)
+type pat_a8c54f1 = Token.t (* pattern [/_\-=->,;:::!=?.@*&#%^+<>|~]+ *)
 [@@deriving sexp_of]
 
 type metavariable = Token.t (* pattern \$[a-zA-Z_]\w* *)
@@ -166,7 +166,7 @@ type non_special_token = [
   | `Super of Token.t (* "super" *)
   | `Crate of Token.t (* "crate" *)
   | `Choice_u8 of anon_choice_u8_6dad923
-  | `Pat_785a82e of pat_785a82e (*tok*)
+  | `Pat_a8c54f1 of pat_a8c54f1 (*tok*)
   | `SQUOT of Token.t (* "'" *)
   | `As of Token.t (* "as" *)
   | `Async of Token.t (* "async" *)
@@ -368,7 +368,12 @@ and anon_choice_shor_field_init_9cb4441 = [
 
 and anon_choice_type_39799c3 = [
     `Type of type_
-  | `Type_bind of (identifier (*tok*) * Token.t (* "=" *) * type_)
+  | `Type_bind of (
+        identifier (*tok*)
+      * type_arguments option
+      * Token.t (* "=" *)
+      * type_
+    )
   | `Life of lifetime
   | `Lit of literal
   | `Blk of block
@@ -520,7 +525,7 @@ and declaration_statement = [
   | `Macro_invo of macro_invocation
   | `Macro_defi of (
         Token.t (* "macro_rules!" *)
-      * identifier (*tok*)
+      * [ `Id of identifier (*tok*) | `Choice_defa of reserved_identifier ]
       * [
             `LPAR_rep_macro_rule_SEMI_opt_macro_rule_RPAR_SEMI of (
                 Token.t (* "(" *)
@@ -634,7 +639,7 @@ and declaration_statement = [
           option
       * type_
       * where_clause option
-      * declaration_list
+      * [ `Decl_list of declaration_list | `SEMI of Token.t (* ";" *) ]
     )
   | `Trait_item of (
         visibility_modifier option
@@ -649,6 +654,7 @@ and declaration_statement = [
   | `Asso_type of (
         Token.t (* "type" *)
       * identifier (*tok*)
+      * type_parameters option
       * trait_bounds option
       * Token.t (* ";" *)
     )
@@ -981,7 +987,11 @@ and last_match_arm = (
 )
 
 and macro_invocation = (
-    [ `Scoped_id of scoped_identifier | `Id of identifier (*tok*) ]
+    [
+        `Scoped_id of scoped_identifier
+      | `Id of identifier (*tok*)
+      | `Choice_defa of reserved_identifier
+    ]
   * Token.t (* "!" *)
   * token_tree
 )
@@ -1080,6 +1090,7 @@ and path = [
   | `Crate of Token.t (* "crate" *)
   | `Id of identifier (*tok*)
   | `Scoped_id of scoped_identifier
+  | `Choice_defa of reserved_identifier
 ]
 
 and pattern = [
@@ -1433,7 +1444,7 @@ type token_repetition_pattern (* inlined *) = (
 
 type macro_definition (* inlined *) = (
     Token.t (* "macro_rules!" *)
-  * identifier (*tok*)
+  * [ `Id of identifier (*tok*) | `Choice_defa of reserved_identifier ]
   * [
         `LPAR_rep_macro_rule_SEMI_opt_macro_rule_RPAR_SEMI of (
             Token.t (* "(" *)
@@ -1491,6 +1502,7 @@ type assignment_expression (* inlined *) = (
 type associated_type (* inlined *) = (
     Token.t (* "type" *)
   * identifier (*tok*)
+  * type_parameters option
   * trait_bounds option
   * Token.t (* ";" *)
 )
@@ -1684,7 +1696,7 @@ type impl_item (* inlined *) = (
       option
   * type_
   * where_clause option
-  * declaration_list
+  * [ `Decl_list of declaration_list | `SEMI of Token.t (* ";" *) ]
 )
 [@@deriving sexp_of]
 
@@ -1900,7 +1912,10 @@ type tuple_struct_pattern (* inlined *) = (
 [@@deriving sexp_of]
 
 type type_binding (* inlined *) = (
-    identifier (*tok*) * Token.t (* "=" *) * type_
+    identifier (*tok*)
+  * type_arguments option
+  * Token.t (* "=" *)
+  * type_
 )
 [@@deriving sexp_of]
 
