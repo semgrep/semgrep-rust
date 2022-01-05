@@ -1,4 +1,5 @@
 const PREC = {
+  range: 15,
   call: 14,
   field: 13,
   unary: 11,
@@ -11,7 +12,6 @@ const PREC = {
   comparative: 4,
   and: 3,
   or: 2,
-  range: 1,
   assign: 0,
   closure: -1,
 }
@@ -129,7 +129,10 @@ module.exports = grammar({
 
       return seq(
         'macro_rules!',
-        field('name', $.identifier),
+        field('name', choice(
+          $.identifier,
+          $._reserved_identifier,
+        )),
         choice(
           seq('(', rules, ')', ';'),
           seq('{', rules, '}')
@@ -190,7 +193,7 @@ module.exports = grammar({
     _non_special_token: $ => choice(
       $._literal, $.identifier, $.metavariable, $.mutable_specifier, $.self, $.super, $.crate,
       alias(choice(...primitive_types), $.primitive_type),
-      /[/_\-=->,;:::!=?.@*=/=&=#%=^=+<>|~]+/,
+      /[/_\-=->,;:::!=?.@*&#%^+<>|~]+/,
       '\'',
       'as', 'async', 'await', 'break', 'const', 'continue', 'default', 'enum', 'fn', 'for', 'if', 'impl',
       'let', 'loop', 'match', 'mod', 'pub', 'return', 'static', 'struct', 'trait', 'type',
@@ -461,7 +464,7 @@ module.exports = grammar({
       )),
       field('type', $._type),
       optional($.where_clause),
-      field('body', $.declaration_list)
+      choice(field('body', $.declaration_list), ';')
     ),
 
     trait_item: $ => seq(
@@ -478,6 +481,7 @@ module.exports = grammar({
     associated_type: $ => seq(
       'type',
       field('name', $._type_identifier),
+      field('type_parameters', optional($.type_parameters)),
       field('bounds', optional($.trait_bounds)),
       ';'
     ),
@@ -783,6 +787,7 @@ module.exports = grammar({
 
     type_binding: $ => seq(
       field('name', $._type_identifier),
+      field('type_arguments', optional($.type_arguments)),
       '=',
       field('type', $._type)
     ),
@@ -877,7 +882,8 @@ module.exports = grammar({
     macro_invocation: $ => seq(
       field('macro', choice(
         $.scoped_identifier,
-        $.identifier
+        $.identifier,
+        $._reserved_identifier,
       )),
       '!',
       $.token_tree
@@ -914,7 +920,10 @@ module.exports = grammar({
     ),
 
     range_expression: $ => prec.left(PREC.range, choice(
-      seq($._expression, choice('..', '...', '..='), $._expression),
+      prec.left(
+        PREC.range + 1,
+        seq($._expression, choice('..', '...', '..='), $._expression)
+      ),
       seq($._expression, '..'),
       seq('..', $._expression),
       '..'
@@ -1426,10 +1435,11 @@ module.exports = grammar({
       $.super,
       $.crate,
       $.identifier,
-      $.scoped_identifier
+      $.scoped_identifier,
+      $._reserved_identifier,
     ),
 
-    identifier: $ => /(r#)?[a-zA-Zα-ωΑ-Ωµ_][a-zA-Zα-ωΑ-Ωµ\d_]*/,
+    identifier: $ => /(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*/,
 
     _reserved_identifier: $ => alias(choice(
       'default',
