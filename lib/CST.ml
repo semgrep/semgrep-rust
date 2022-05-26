@@ -25,6 +25,15 @@ type fragment_specifier = [
 ]
 [@@deriving sexp_of]
 
+type block_comment = Token.t
+[@@deriving sexp_of]
+
+type metavariable = Token.t (* pattern \$[a-zA-Z_]\w* *)
+[@@deriving sexp_of]
+
+type string_content = Token.t
+[@@deriving sexp_of]
+
 type anon_choice_PLUS_348fa54 = [
     `PLUS of Token.t (* "+" *)
   | `STAR of Token.t (* "*" *)
@@ -33,18 +42,6 @@ type anon_choice_PLUS_348fa54 = [
 [@@deriving sexp_of]
 
 type line_comment = Token.t
-[@@deriving sexp_of]
-
-type string_content = Token.t
-[@@deriving sexp_of]
-
-type block_comment = Token.t
-[@@deriving sexp_of]
-
-type boolean_literal = [
-    `True of Token.t (* "true" *)
-  | `False of Token.t (* "false" *)
-]
 [@@deriving sexp_of]
 
 type anon_choice_u8_6dad923 = [
@@ -74,13 +71,25 @@ type float_literal = Token.t
 type integer_literal = Token.t
 [@@deriving sexp_of]
 
-type pat_1e84e62 = Token.t (* pattern [^+*?]+ *)
+type pat_a8c54f1 = Token.t (* pattern [/_\-=->,;:::!=?.@*&#%^+<>|~]+ *)
 [@@deriving sexp_of]
 
-type raw_string_literal = Token.t
+type escape_sequence = Token.t
 [@@deriving sexp_of]
 
 type char_literal = Token.t
+[@@deriving sexp_of]
+
+type pat_1e84e62 = Token.t (* pattern [^+*?]+ *)
+[@@deriving sexp_of]
+
+type boolean_literal = [
+    `True of Token.t (* "true" *)
+  | `False of Token.t (* "false" *)
+]
+[@@deriving sexp_of]
+
+type raw_string_literal = Token.t
 [@@deriving sexp_of]
 
 type reserved_identifier = [
@@ -89,16 +98,7 @@ type reserved_identifier = [
 ]
 [@@deriving sexp_of]
 
-type escape_sequence = Token.t
-[@@deriving sexp_of]
-
 type pat_36c5a8e = Token.t (* pattern "b?\"" *)
-[@@deriving sexp_of]
-
-type pat_a8c54f1 = Token.t (* pattern [/_\-=->,;:::!=?.@*&#%^+<>|~]+ *)
-[@@deriving sexp_of]
-
-type metavariable = Token.t (* pattern \$[a-zA-Z_]\w* *)
 [@@deriving sexp_of]
 
 type identifier = Token.t
@@ -132,6 +132,9 @@ type literal_pattern = [
 ]
 [@@deriving sexp_of]
 
+type extern_modifier = (Token.t (* "extern" *) * string_literal option)
+[@@deriving sexp_of]
+
 type literal = [
     `Str_lit of string_literal
   | `Raw_str_lit of raw_string_literal (*tok*)
@@ -142,19 +145,27 @@ type literal = [
 ]
 [@@deriving sexp_of]
 
-type extern_modifier = (Token.t (* "extern" *) * string_literal option)
+type loop_label = (Token.t (* "'" *) * identifier (*tok*))
 [@@deriving sexp_of]
 
 type lifetime = (Token.t (* "'" *) * identifier (*tok*))
 [@@deriving sexp_of]
 
-type loop_label = (Token.t (* "'" *) * identifier (*tok*))
-[@@deriving sexp_of]
-
-type anon_choice_type_id_8184947 = [
+type anon_choice_field_id_8184947 = [
     `Id of identifier (*tok*)
   | `Meta of metavariable (*tok*)
 ]
+[@@deriving sexp_of]
+
+type function_modifiers =
+  [
+      `Async of Token.t (* "async" *)
+    | `Defa of Token.t (* "default" *)
+    | `Const of Token.t (* "const" *)
+    | `Unsafe of Token.t (* "unsafe" *)
+    | `Extern_modi of extern_modifier
+  ]
+    list (* one or more *)
 [@@deriving sexp_of]
 
 type non_special_token = [
@@ -196,17 +207,6 @@ type non_special_token = [
   | `Where of Token.t (* "where" *)
   | `While of Token.t (* "while" *)
 ]
-[@@deriving sexp_of]
-
-type function_modifiers =
-  [
-      `Async of Token.t (* "async" *)
-    | `Defa of Token.t (* "default" *)
-    | `Const of Token.t (* "const" *)
-    | `Unsafe of Token.t (* "unsafe" *)
-    | `Extern_modi of extern_modifier
-  ]
-    list (* one or more *)
 [@@deriving sexp_of]
 
 type for_lifetimes = (
@@ -292,6 +292,23 @@ type macro_rule = (token_tree_pattern * Token.t (* "=>" *) * token_tree)
 type anon_choice_SEMI_226cc40 = [
     `SEMI of Token.t (* ";" *)
   | `Decl_list of declaration_list
+]
+
+and anon_choice_field_id_02b4436 = [
+    `Id of identifier (*tok*)
+  | `Scoped_type_id of scoped_type_identifier
+  | `Gene_type of generic_type
+  | `Func_type of function_type
+]
+
+and anon_choice_field_id_2c46bcf = [
+    `Id of identifier (*tok*)
+  | `Scoped_type_id of scoped_type_identifier
+]
+
+and anon_choice_field_id_f1f5a37 = [
+    `Id of identifier (*tok*)
+  | `Scoped_id of scoped_identifier
 ]
 
 and anon_choice_field_pat_8e757e8 = [
@@ -384,23 +401,6 @@ and anon_choice_type_d689819 = [
   | `Life of lifetime
   | `Higher_ranked_trait_bound of higher_ranked_trait_bound
   | `Remo_trait_bound of (Token.t (* "?" *) * type_)
-]
-
-and anon_choice_type_id_02b4436 = [
-    `Id of identifier (*tok*)
-  | `Scoped_type_id of scoped_type_identifier
-  | `Gene_type of generic_type
-  | `Func_type of function_type
-]
-
-and anon_choice_type_id_2c46bcf = [
-    `Id of identifier (*tok*)
-  | `Scoped_type_id of scoped_type_identifier
-]
-
-and anon_choice_type_id_f1f5a37 = [
-    `Id of identifier (*tok*)
-  | `Scoped_id of scoped_identifier
 ]
 
 and anon_pat_rep_COMMA_pat_2a80f16 = (
@@ -606,7 +606,7 @@ and declaration_statement = [
         visibility_modifier option
       * function_modifiers option
       * Token.t (* "fn" *)
-      * anon_choice_type_id_8184947
+      * anon_choice_field_id_8184947
       * type_parameters option
       * parameters
       * (Token.t (* "->" *) * type_) option
@@ -617,7 +617,7 @@ and declaration_statement = [
         visibility_modifier option
       * function_modifiers option
       * Token.t (* "fn" *)
-      * anon_choice_type_id_8184947
+      * anon_choice_field_id_8184947
       * type_parameters option
       * parameters
       * (Token.t (* "->" *) * type_) option
@@ -941,7 +941,7 @@ and field_initializer_list = (
 and function_type = (
     for_lifetimes option
   * [
-        `Choice_id of anon_choice_type_id_2c46bcf
+        `Choice_id of anon_choice_field_id_2c46bcf
       | `Opt_func_modifs_fn of (
             function_modifiers option
           * Token.t (* "fn" *)
@@ -951,10 +951,10 @@ and function_type = (
   * (Token.t (* "->" *) * type_) option
 )
 
-and generic_type = (anon_choice_type_id_2c46bcf * type_arguments)
+and generic_type = (anon_choice_field_id_2c46bcf * type_arguments)
 
 and generic_type_with_turbofish = (
-    anon_choice_type_id_f1f5a37 * Token.t (* "::" *) * type_arguments
+    anon_choice_field_id_f1f5a37 * Token.t (* "::" *) * type_arguments
 )
 
 and higher_ranked_trait_bound = (
@@ -1105,14 +1105,14 @@ and pattern = [
       * Token.t (* ")" *)
     )
   | `Tuple_struct_pat of (
-        anon_choice_type_id_f1f5a37
+        anon_choice_field_id_f1f5a37
       * Token.t (* "(" *)
       * anon_pat_rep_COMMA_pat_2a80f16 option
       * Token.t (* "," *) option
       * Token.t (* ")" *)
     )
   | `Struct_pat of (
-        anon_choice_type_id_2c46bcf
+        anon_choice_field_id_2c46bcf
       * Token.t (* "{" *)
       * (
             anon_choice_field_pat_8e757e8
@@ -1239,7 +1239,7 @@ and tuple_type = (
 )
 
 and type_ = [
-    `Abst_type of (Token.t (* "impl" *) * anon_choice_type_id_02b4436)
+    `Abst_type of (Token.t (* "impl" *) * anon_choice_field_id_02b4436)
   | `Ref_type of reference_type
   | `Meta of metavariable (*tok*)
   | `Poin_type of pointer_type
@@ -1257,7 +1257,7 @@ and type_ = [
   | `Id of identifier (*tok*)
   | `Macro_invo of macro_invocation
   | `Empty_type of Token.t (* "!" *)
-  | `Dyna_type of (Token.t (* "dyn" *) * anon_choice_type_id_02b4436)
+  | `Dyna_type of (Token.t (* "dyn" *) * anon_choice_field_id_02b4436)
   | `Boun_type of bounded_type
   | `Choice_u8 of anon_choice_u8_6dad923
 ]
@@ -1349,19 +1349,16 @@ type source_file = [
 ]
 [@@deriving sexp_of]
 
-type variadic_parameter (* inlined *) = Token.t (* "..." *)
-[@@deriving sexp_of]
-
-type unit_type (* inlined *) = (Token.t (* "(" *) * Token.t (* ")" *))
+type unit_expression (* inlined *) = (Token.t (* "(" *) * Token.t (* ")" *))
 [@@deriving sexp_of]
 
 type mutable_specifier (* inlined *) = Token.t (* "mut" *)
 [@@deriving sexp_of]
 
-type remaining_field_pattern (* inlined *) = Token.t (* ".." *)
+type empty_type (* inlined *) = Token.t (* "!" *)
 [@@deriving sexp_of]
 
-type ellipsis (* inlined *) = Token.t (* "..." *)
+type variadic_parameter (* inlined *) = Token.t (* "..." *)
 [@@deriving sexp_of]
 
 type empty_statement (* inlined *) = Token.t (* ";" *)
@@ -1370,16 +1367,24 @@ type empty_statement (* inlined *) = Token.t (* ";" *)
 type crate (* inlined *) = Token.t (* "crate" *)
 [@@deriving sexp_of]
 
-type empty_type (* inlined *) = Token.t (* "!" *)
+type self (* inlined *) = Token.t (* "self" *)
+[@@deriving sexp_of]
+
+type remaining_field_pattern (* inlined *) = Token.t (* ".." *)
+[@@deriving sexp_of]
+
+type unit_type (* inlined *) = (Token.t (* "(" *) * Token.t (* ")" *))
 [@@deriving sexp_of]
 
 type super (* inlined *) = Token.t (* "super" *)
 [@@deriving sexp_of]
 
-type self (* inlined *) = Token.t (* "self" *)
+type ellipsis (* inlined *) = Token.t (* "..." *)
 [@@deriving sexp_of]
 
-type unit_expression (* inlined *) = (Token.t (* "(" *) * Token.t (* ")" *))
+type token_binding_pattern (* inlined *) = (
+    metavariable (*tok*) * Token.t (* ":" *) * fragment_specifier
+)
 [@@deriving sexp_of]
 
 type comment (* inlined *) = [
@@ -1397,15 +1402,16 @@ type negative_literal (* inlined *) = (
 )
 [@@deriving sexp_of]
 
-type token_binding_pattern (* inlined *) = (
-    metavariable (*tok*) * Token.t (* ":" *) * fragment_specifier
-)
+type field_identifier (* inlined *) = identifier (*tok*)
 [@@deriving sexp_of]
 
 type type_identifier (* inlined *) = identifier (*tok*)
 [@@deriving sexp_of]
 
-type field_identifier (* inlined *) = identifier (*tok*)
+type continue_expression (* inlined *) = (
+    Token.t (* "continue" *)
+  * loop_label option
+)
 [@@deriving sexp_of]
 
 type self_parameter (* inlined *) = (
@@ -1413,12 +1419,6 @@ type self_parameter (* inlined *) = (
   * lifetime option
   * Token.t (* "mut" *) option
   * Token.t (* "self" *)
-)
-[@@deriving sexp_of]
-
-type continue_expression (* inlined *) = (
-    Token.t (* "continue" *)
-  * loop_label option
 )
 [@@deriving sexp_of]
 
@@ -1464,7 +1464,7 @@ type macro_definition (* inlined *) = (
 [@@deriving sexp_of]
 
 type abstract_type (* inlined *) = (
-    Token.t (* "impl" *) * anon_choice_type_id_02b4436
+    Token.t (* "impl" *) * anon_choice_field_id_02b4436
 )
 [@@deriving sexp_of]
 
@@ -1585,7 +1585,7 @@ type deep_ellipsis (* inlined *) = (
 [@@deriving sexp_of]
 
 type dynamic_type (* inlined *) = (
-    Token.t (* "dyn" *) * anon_choice_type_id_02b4436
+    Token.t (* "dyn" *) * anon_choice_field_id_02b4436
 )
 [@@deriving sexp_of]
 
@@ -1648,7 +1648,7 @@ type function_item (* inlined *) = (
     visibility_modifier option
   * function_modifiers option
   * Token.t (* "fn" *)
-  * anon_choice_type_id_8184947
+  * anon_choice_field_id_8184947
   * type_parameters option
   * parameters
   * (Token.t (* "->" *) * type_) option
@@ -1661,7 +1661,7 @@ type function_signature_item (* inlined *) = (
     visibility_modifier option
   * function_modifiers option
   * Token.t (* "fn" *)
-  * anon_choice_type_id_8184947
+  * anon_choice_field_id_8184947
   * type_parameters option
   * parameters
   * (Token.t (* "->" *) * type_) option
@@ -1855,7 +1855,7 @@ type struct_item (* inlined *) = (
 [@@deriving sexp_of]
 
 type struct_pattern (* inlined *) = (
-    anon_choice_type_id_2c46bcf
+    anon_choice_field_id_2c46bcf
   * Token.t (* "{" *)
   * (
         anon_choice_field_pat_8e757e8
@@ -1903,7 +1903,7 @@ type tuple_pattern (* inlined *) = (
 [@@deriving sexp_of]
 
 type tuple_struct_pattern (* inlined *) = (
-    anon_choice_type_id_f1f5a37
+    anon_choice_field_id_f1f5a37
   * Token.t (* "(" *)
   * anon_pat_rep_COMMA_pat_2a80f16 option
   * Token.t (* "," *) option
@@ -1998,6 +1998,11 @@ type while_let_expression (* inlined *) = (
 
 type semgrep_expression (* inlined *) = (
     Token.t (* "__SEMGREP_EXPRESSION" *) * expression
+)
+[@@deriving sexp_of]
+
+type member_access_ellipsis_expression (* inlined *) = (
+    expression * Token.t (* "." *) * Token.t (* "..." *)
 )
 [@@deriving sexp_of]
 
