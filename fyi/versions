@@ -48,11 +48,11 @@ Last change in file:
 ---
 File: semgrep-grammars/src/semgrep-rust/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: f2449518d5ec61ee6e639bb15114660dd9b883b0
+Latest commit in repo: 24fc1c52100deaf3f577971da59e8f774f54b924
 Last change in file:
-  commit f2449518d5ec61ee6e639bb15114660dd9b883b0
+  commit 24fc1c52100deaf3f577971da59e8f774f54b924
   Author: Cooper Pierce <cooper@r2c.dev>
-  Date:   Thu May 26 13:47:54 2022 -0700
+  Date:   Thu May 26 14:29:30 2022 -0700
   
-      Add ellipsis for method/field chains to Rust
+      Add tests for ellipsis_method_chaining Rust
 ---
