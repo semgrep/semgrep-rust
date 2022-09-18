@@ -1312,14 +1312,17 @@ let children_regexps : (string * Run.exp option) list = [
   );
   "field_declaration",
   Some (
-    Seq [
-      Opt (
-        Token (Name "visibility_modifier");
-      );
-      Token (Name "identifier");
-      Token (Literal ":");
-      Token (Name "type");
-    ];
+    Alt [|
+      Seq [
+        Opt (
+          Token (Name "visibility_modifier");
+        );
+        Token (Name "identifier");
+        Token (Literal ":");
+        Token (Name "type");
+      ];
+      Token (Name "ellipsis");
+    |];
   );
   "field_declaration_list",
   Some (
@@ -6680,15 +6683,25 @@ and trans_field_declaration ((kind, body) : mt) : CST.field_declaration =
   match body with
   | Children v ->
       (match v with
-      | Seq [v0; v1; v2; v3] ->
-          (
-            Run.opt
-              (fun v -> trans_visibility_modifier (Run.matcher_token v))
-              v0
-            ,
-            trans_identifier (Run.matcher_token v1),
-            Run.trans_token (Run.matcher_token v2),
-            trans_type_ (Run.matcher_token v3)
+      | Alt (0, v) ->
+          `Opt_visi_modi_id_COLON_type (
+            (match v with
+            | Seq [v0; v1; v2; v3] ->
+                (
+                  Run.opt
+                    (fun v -> trans_visibility_modifier (Run.matcher_token v))
+                    v0
+                  ,
+                  trans_identifier (Run.matcher_token v1),
+                  Run.trans_token (Run.matcher_token v2),
+                  trans_type_ (Run.matcher_token v3)
+                )
+            | _ -> assert false
+            )
+          )
+      | Alt (1, v) ->
+          `Ellips (
+            trans_ellipsis (Run.matcher_token v)
           )
       | _ -> assert false
       )

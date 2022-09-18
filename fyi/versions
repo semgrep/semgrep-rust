@@ -38,15 +38,15 @@ Last change in file:
 ---
 File: semgrep-grammars/src/semgrep-rust/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: 7adb7ea963e25e37360a61d972720dfc3598acea
+Latest commit in repo: 8e7c45af00d413975d65265b70393866d1c0ad8e
 Last change in file:
-  commit 9a096b6a69b756c165db8895ef6502ecb5b9af98
+  commit 8e7c45af00d413975d65265b70393866d1c0ad8e
   Author: pad <pad@r2c.dev>
-  Date:   Sun Sep 18 18:59:03 2022 +0200
+  Date:   Sun Sep 18 21:46:06 2022 +0200
   
-      Rust: support ellipsis in declarations
+      Rust: support ellipsis in struct fields
       
-      This will help https://github.com/returntocorp/semgrep/issues/6066
+      This will help https://github.com/returntocorp/semgrep/issues/3759
       
       test plan:
       test file included

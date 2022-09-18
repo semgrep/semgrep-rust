@@ -1259,16 +1259,20 @@ and map_extern_crate_declaration (env : env) ((v1, v2, v3, v4, v5, v6) : CST.ext
   let v6 = (* ";" *) token env v6 in
   todo env (v1, v2, v3, v4, v5, v6)
 
-and map_field_declaration (env : env) ((v1, v2, v3, v4) : CST.field_declaration) =
-  let v1 =
-    (match v1 with
-    | Some x -> map_visibility_modifier env x
-    | None -> todo env ())
-  in
-  let v2 = (* identifier *) token env v2 in
-  let v3 = (* ":" *) token env v3 in
-  let v4 = map_type_ env v4 in
-  todo env (v1, v2, v3, v4)
+and map_field_declaration (env : env) (x : CST.field_declaration) =
+  (match x with
+  | `Opt_visi_modi_id_COLON_type (v1, v2, v3, v4) ->
+      let v1 =
+        (match v1 with
+        | Some x -> map_visibility_modifier env x
+        | None -> todo env ())
+      in
+      let v2 = (* identifier *) token env v2 in
+      let v3 = (* ":" *) token env v3 in
+      let v4 = map_type_ env v4 in
+      todo env (v1, v2, v3, v4)
+  | `Ellips tok -> (* "..." *) token env tok
+  )
 
 and map_field_declaration_list (env : env) ((v1, v2, v3, v4) : CST.field_declaration_list) =
   let v1 = (* "{" *) token env v1 in

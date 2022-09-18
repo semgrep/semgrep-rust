@@ -808,12 +808,15 @@ and extern_crate_declaration = (
   * Token.t (* ";" *)
 )
 
-and field_declaration = (
-    visibility_modifier option
-  * identifier (*tok*)
-  * Token.t (* ":" *)
-  * type_
-)
+and field_declaration = [
+    `Opt_visi_modi_id_COLON_type of (
+        visibility_modifier option
+      * identifier (*tok*)
+      * Token.t (* ":" *)
+      * type_
+    )
+  | `Ellips of Token.t (* "..." *)
+]
 
 and field_declaration_list = (
     Token.t (* "{" *)
