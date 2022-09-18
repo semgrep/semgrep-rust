@@ -2,25 +2,15 @@ File: semgrep-grammars/src/tree-sitter-rust/LICENSE
 Git repo name: tree-sitter-rust
 Latest commit in repo: d045b04b66d51c0ba8671e7ce1ee23a9f286b7d7
 Last change in file:
-  commit d045b04b66d51c0ba8671e7ce1ee23a9f286b7d7
-  Author: かわえもん <me@kawaemon.dev>
-  Date:   Mon Dec 13 03:08:54 2021 +0900
+  commit 2beedf23bedbd7b02b416518693e8eed3944d4a0
+  Author: Eric Shimizu Karbstein <gr41.j4ck@gmail.com>
+  Date:   Tue Jan 5 15:00:48 2021 -0300
   
-      Add Generic Associated Types support (#124)
+      Add const block expression (#97)
       
-      * tests: put tests for GAT
+      * Add const block expression
       
-      * feat: support GAT
-      
-      * tests: add normal type parameter to generic associated type
-      
-      * tests: add checks for type binding
-      
-      * feat: support type binding to have type arguments
-      
-      * chore: regenerate parser
-      
-      * chore: fix formatting
+      * Fix const block pattern test
 ---
 File: semgrep-grammars/src/tree-sitter-rust/grammar.js
 Git repo name: tree-sitter-rust
@@ -48,11 +38,17 @@ Last change in file:
 ---
 File: semgrep-grammars/src/semgrep-rust/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: 2755c868abc698f0fbee3def06c402e708f08ac1
+Latest commit in repo: 7adb7ea963e25e37360a61d972720dfc3598acea
 Last change in file:
-  commit 24fc1c52100deaf3f577971da59e8f774f54b924
-  Author: Cooper Pierce <cooper@r2c.dev>
-  Date:   Thu May 26 14:29:30 2022 -0700
+  commit 9a096b6a69b756c165db8895ef6502ecb5b9af98
+  Author: pad <pad@r2c.dev>
+  Date:   Sun Sep 18 18:59:03 2022 +0200
   
-      Add tests for ellipsis_method_chaining Rust
+      Rust: support ellipsis in declarations
+      
+      This will help https://github.com/returntocorp/semgrep/issues/6066
+      
+      test plan:
+      test file included
+      ./test-lang rust
 ---
