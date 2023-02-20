@@ -8,38 +8,21 @@
 open! Sexplib.Conv
 open Tree_sitter_run
 
-type fragment_specifier = [
-    `Blk of Token.t (* "block" *)
-  | `Expr of Token.t (* "expr" *)
-  | `Id of Token.t (* "ident" *)
-  | `Item of Token.t (* "item" *)
-  | `Life of Token.t (* "lifetime" *)
-  | `Lit of Token.t (* "literal" *)
-  | `Meta of Token.t (* "meta" *)
-  | `Pat of Token.t (* "pat" *)
-  | `Path of Token.t (* "path" *)
-  | `Stmt of Token.t (* "stmt" *)
-  | `Tt of Token.t (* "tt" *)
-  | `Ty of Token.t (* "ty" *)
-  | `Vis of Token.t (* "vis" *)
-]
-[@@deriving sexp_of]
-
-type block_comment = Token.t
-[@@deriving sexp_of]
-
-type metavariable = Token.t (* pattern \$[a-zA-Z_]\w* *)
-[@@deriving sexp_of]
+type integer_literal = Token.t
 
 type string_content = Token.t
-[@@deriving sexp_of]
+
+type tok_prec_p1_lt = Token.t
+
+type block_comment = Token.t
 
 type anon_choice_PLUS_348fa54 = [
     `PLUS of Token.t (* "+" *)
   | `STAR of Token.t (* "*" *)
   | `QMARK of Token.t (* "?" *)
 ]
-[@@deriving sexp_of]
+
+type identifier = Token.t
 
 type anon_choice_u8_6dad923 = [
     `U8 of Token.t (* "u8" *)
@@ -60,55 +43,56 @@ type anon_choice_u8_6dad923 = [
   | `Str of Token.t (* "str" *)
   | `Char of Token.t (* "char" *)
 ]
-[@@deriving sexp_of]
-
-type float_literal = Token.t
-[@@deriving sexp_of]
-
-type line_comment = Token.t
-[@@deriving sexp_of]
-
-type imm_tok_dquot = Token.t (* "\"" *)
-[@@deriving sexp_of]
-
-type pat_a8c54f1 = Token.t (* pattern [/_\-=->,;:::!=?.@*&#%^+<>|~]+ *)
-[@@deriving sexp_of]
 
 type escape_sequence = Token.t
-[@@deriving sexp_of]
 
-type char_literal = Token.t
-[@@deriving sexp_of]
+type imm_tok_dquot = Token.t (* "\"" *)
 
-type pat_1e84e62 = Token.t (* pattern [^+*?]+ *)
-[@@deriving sexp_of]
+type fragment_specifier = [
+    `Blk of Token.t (* "block" *)
+  | `Expr of Token.t (* "expr" *)
+  | `Id of Token.t (* "ident" *)
+  | `Item of Token.t (* "item" *)
+  | `Life of Token.t (* "lifetime" *)
+  | `Lit of Token.t (* "literal" *)
+  | `Meta of Token.t (* "meta" *)
+  | `Pat of Token.t (* "pat" *)
+  | `Path of Token.t (* "path" *)
+  | `Stmt of Token.t (* "stmt" *)
+  | `Tt of Token.t (* "tt" *)
+  | `Ty of Token.t (* "ty" *)
+  | `Vis of Token.t (* "vis" *)
+]
 
-type tok_prec_p1_lt = Token.t
-[@@deriving sexp_of]
+type float_literal = Token.t
 
-type integer_literal = Token.t
-[@@deriving sexp_of]
+type pat_a8c54f1 = Token.t (* pattern [/_\-=->,;:::!=?.@*&#%^+<>|~]+ *)
 
 type boolean_literal = [
     `True of Token.t (* "true" *)
   | `False of Token.t (* "false" *)
 ]
-[@@deriving sexp_of]
+
+type line_comment = Token.t
+
+type pat_1e84e62 = Token.t (* pattern [^+*?]+ *)
+
+type metavariable = Token.t (* pattern \$[a-zA-Z_]\w* *)
+
+type line_comment_explicit = unit (* blank *)
+
+type block_comment_explicit = unit (* blank *)
 
 type raw_string_literal = Token.t
-[@@deriving sexp_of]
+
+type pat_36c5a8e = Token.t (* pattern "b?\"" *)
+
+type char_literal = Token.t
 
 type reserved_identifier = [
     `Defa of Token.t (* "default" *)
   | `Union of Token.t (* "union" *)
 ]
-[@@deriving sexp_of]
-
-type pat_36c5a8e = Token.t (* pattern "b?\"" *)
-[@@deriving sexp_of]
-
-type identifier = Token.t
-[@@deriving sexp_of]
 
 type string_literal = (
     pat_36c5a8e
@@ -119,20 +103,15 @@ type string_literal = (
       list (* zero or more *)
   * imm_tok_dquot (*tok*)
 )
-[@@deriving sexp_of]
 
-type literal = [
-    `Str_lit of string_literal
-  | `Raw_str_lit of raw_string_literal (*tok*)
-  | `Char_lit of char_literal (*tok*)
-  | `Bool_lit of boolean_literal
-  | `Int_lit of integer_literal (*tok*)
-  | `Float_lit of float_literal (*tok*)
+type loop_label = (Token.t (* "'" *) * identifier (*tok*))
+
+type lifetime = (Token.t (* "'" *) * identifier (*tok*))
+
+type anon_choice_field_id_8184947 = [
+    `Id of identifier (*tok*)
+  | `Meta of metavariable (*tok*)
 ]
-[@@deriving sexp_of]
-
-type extern_modifier = (Token.t (* "extern" *) * string_literal option)
-[@@deriving sexp_of]
 
 type literal_pattern = [
     `Str_lit of string_literal
@@ -149,19 +128,36 @@ type literal_pattern = [
         ]
     )
 ]
-[@@deriving sexp_of]
 
-type lifetime = (Token.t (* "'" *) * identifier (*tok*))
-[@@deriving sexp_of]
+type extern_modifier = (Token.t (* "extern" *) * string_literal option)
 
-type loop_label = (Token.t (* "'" *) * identifier (*tok*))
-[@@deriving sexp_of]
-
-type anon_choice_type_id_8184947 = [
-    `Id of identifier (*tok*)
-  | `Meta of metavariable (*tok*)
+type literal = [
+    `Str_lit of string_literal
+  | `Raw_str_lit of raw_string_literal (*tok*)
+  | `Char_lit of char_literal (*tok*)
+  | `Bool_lit of boolean_literal
+  | `Int_lit of integer_literal (*tok*)
+  | `Float_lit of float_literal (*tok*)
 ]
-[@@deriving sexp_of]
+
+type for_lifetimes = (
+    Token.t (* "for" *)
+  * Token.t (* "<" *)
+  * lifetime
+  * (Token.t (* "," *) * lifetime) list (* zero or more *)
+  * Token.t (* "," *) option
+  * Token.t (* ">" *)
+)
+
+type function_modifiers =
+  [
+      `Async of Token.t (* "async" *)
+    | `Defa of Token.t (* "default" *)
+    | `Const of Token.t (* "const" *)
+    | `Unsafe of Token.t (* "unsafe" *)
+    | `Extern_modi of extern_modifier
+  ]
+    list (* one or more *)
 
 type non_special_token = [
     `Lit of literal
@@ -202,28 +198,6 @@ type non_special_token = [
   | `Where of Token.t (* "where" *)
   | `While of Token.t (* "while" *)
 ]
-[@@deriving sexp_of]
-
-type function_modifiers =
-  [
-      `Async of Token.t (* "async" *)
-    | `Defa of Token.t (* "default" *)
-    | `Const of Token.t (* "const" *)
-    | `Unsafe of Token.t (* "unsafe" *)
-    | `Extern_modi of extern_modifier
-  ]
-    list (* one or more *)
-[@@deriving sexp_of]
-
-type for_lifetimes = (
-    Token.t (* "for" *)
-  * Token.t (* "<" *)
-  * lifetime
-  * (Token.t (* "," *) * lifetime) list (* zero or more *)
-  * Token.t (* "," *) option
-  * Token.t (* ">" *)
-)
-[@@deriving sexp_of]
 
 type token_pattern = [
     `Tok_tree_pat of token_tree_pattern
@@ -258,7 +232,6 @@ and token_tree_pattern = [
       * Token.t (* "}" *)
     )
 ]
-[@@deriving sexp_of]
 
 type token_tree = [
     `LPAR_rep_choice_tok_tree_RPAR of (
@@ -290,10 +263,8 @@ and tokens = [
     )
   | `Choice_lit of non_special_token
 ]
-[@@deriving sexp_of]
 
 type macro_rule = (token_tree_pattern * Token.t (* "=>" *) * token_tree)
-[@@deriving sexp_of]
 
 type macro_definition = (
     Token.t (* "macro_rules!" *)
@@ -314,11 +285,27 @@ type macro_definition = (
         )
     ]
 )
-[@@deriving sexp_of]
 
 type anon_choice_SEMI_226cc40 = [
     `SEMI of Token.t (* ";" *)
   | `Decl_list of declaration_list
+]
+
+and anon_choice_field_id_02b4436 = [
+    `Id of identifier (*tok*)
+  | `Scoped_type_id of scoped_type_identifier
+  | `Gene_type of generic_type
+  | `Func_type of function_type
+]
+
+and anon_choice_field_id_2c46bcf = [
+    `Id of identifier (*tok*)
+  | `Scoped_type_id of scoped_type_identifier
+]
+
+and anon_choice_field_id_f1f5a37 = [
+    `Id of identifier (*tok*)
+  | `Scoped_id of scoped_identifier
 ]
 
 and anon_choice_field_pat_8e757e8 = [
@@ -411,23 +398,6 @@ and anon_choice_type_d689819 = [
   | `Life of lifetime
   | `Higher_ranked_trait_bound of higher_ranked_trait_bound
   | `Remo_trait_bound of (Token.t (* "?" *) * type_)
-]
-
-and anon_choice_type_id_02b4436 = [
-    `Id of identifier (*tok*)
-  | `Scoped_type_id of scoped_type_identifier
-  | `Gene_type of generic_type
-  | `Func_type of function_type
-]
-
-and anon_choice_type_id_2c46bcf = [
-    `Id of identifier (*tok*)
-  | `Scoped_type_id of scoped_type_identifier
-]
-
-and anon_choice_type_id_f1f5a37 = [
-    `Id of identifier (*tok*)
-  | `Scoped_id of scoped_identifier
 ]
 
 and anon_pat_rep_COMMA_pat_2a80f16 = (
@@ -863,7 +833,7 @@ and function_item = (
     visibility_modifier option
   * function_modifiers option
   * Token.t (* "fn" *)
-  * anon_choice_type_id_8184947
+  * anon_choice_field_id_8184947
   * type_parameters option
   * parameters
   * (Token.t (* "->" *) * type_) option
@@ -875,7 +845,7 @@ and function_signature_item = (
     visibility_modifier option
   * function_modifiers option
   * Token.t (* "fn" *)
-  * anon_choice_type_id_8184947
+  * anon_choice_field_id_8184947
   * type_parameters option
   * parameters
   * (Token.t (* "->" *) * type_) option
@@ -886,7 +856,7 @@ and function_signature_item = (
 and function_type = (
     for_lifetimes option
   * [
-        `Choice_id of anon_choice_type_id_2c46bcf
+        `Choice_id of anon_choice_field_id_2c46bcf
       | `Opt_func_modifs_fn of (
             function_modifiers option
           * Token.t (* "fn" *)
@@ -896,10 +866,10 @@ and function_type = (
   * (Token.t (* "->" *) * type_) option
 )
 
-and generic_type = (anon_choice_type_id_2c46bcf * type_arguments)
+and generic_type = (anon_choice_field_id_2c46bcf * type_arguments)
 
 and generic_type_with_turbofish = (
-    anon_choice_type_id_f1f5a37 * Token.t (* "::" *) * type_arguments
+    anon_choice_field_id_f1f5a37 * Token.t (* "::" *) * type_arguments
 )
 
 and higher_ranked_trait_bound = (
@@ -1089,14 +1059,14 @@ and pattern = [
       * Token.t (* ")" *)
     )
   | `Tuple_struct_pat of (
-        anon_choice_type_id_f1f5a37
+        anon_choice_field_id_f1f5a37
       * Token.t (* "(" *)
       * anon_pat_rep_COMMA_pat_2a80f16 option
       * Token.t (* "," *) option
       * Token.t (* ")" *)
     )
   | `Struct_pat of (
-        anon_choice_type_id_2c46bcf
+        anon_choice_field_id_2c46bcf
       * Token.t (* "{" *)
       * (
             anon_choice_field_pat_8e757e8
@@ -1265,7 +1235,7 @@ and tuple_type = (
 )
 
 and type_ = [
-    `Abst_type of (Token.t (* "impl" *) * anon_choice_type_id_02b4436)
+    `Abst_type of (Token.t (* "impl" *) * anon_choice_field_id_02b4436)
   | `Ref_type of reference_type
   | `Meta of metavariable (*tok*)
   | `Poin_type of pointer_type
@@ -1283,7 +1253,7 @@ and type_ = [
   | `Id of identifier (*tok*)
   | `Macro_invo of macro_invocation
   | `Empty_type of Token.t (* "!" *)
-  | `Dyna_type of (Token.t (* "dyn" *) * anon_choice_type_id_02b4436)
+  | `Dyna_type of (Token.t (* "dyn" *) * anon_choice_field_id_02b4436)
   | `Boun_type of bounded_type
   | `Choice_u8 of anon_choice_u8_6dad923
 ]
@@ -1389,7 +1359,6 @@ and where_predicate = (
     ]
   * trait_bounds
 )
-[@@deriving sexp_of]
 
 type source_file = [
     `Rep_stmt of statement list (* zero or more *)
@@ -1399,51 +1368,34 @@ type source_file = [
       * statement list (* one or more *)
     )
 ]
-[@@deriving sexp_of]
-
-type mutable_specifier (* inlined *) = Token.t (* "mut" *)
-[@@deriving sexp_of]
-
-type empty_type (* inlined *) = Token.t (* "!" *)
-[@@deriving sexp_of]
-
-type unit_type (* inlined *) = (Token.t (* "(" *) * Token.t (* ")" *))
-[@@deriving sexp_of]
 
 type empty_statement (* inlined *) = Token.t (* ";" *)
-[@@deriving sexp_of]
 
-type crate (* inlined *) = Token.t (* "crate" *)
-[@@deriving sexp_of]
-
-type self (* inlined *) = Token.t (* "self" *)
-[@@deriving sexp_of]
-
-type variadic_parameter (* inlined *) = Token.t (* "..." *)
-[@@deriving sexp_of]
-
-type remaining_field_pattern (* inlined *) = Token.t (* ".." *)
-[@@deriving sexp_of]
+type empty_type (* inlined *) = Token.t (* "!" *)
 
 type unit_expression (* inlined *) = (Token.t (* "(" *) * Token.t (* ")" *))
-[@@deriving sexp_of]
-
-type super (* inlined *) = Token.t (* "super" *)
-[@@deriving sexp_of]
 
 type ellipsis (* inlined *) = Token.t (* "..." *)
-[@@deriving sexp_of]
 
-type token_binding_pattern (* inlined *) = (
-    metavariable (*tok*) * Token.t (* ":" *) * fragment_specifier
-)
-[@@deriving sexp_of]
+type super (* inlined *) = Token.t (* "super" *)
 
-type comment (* inlined *) = [
-    `Line_comm of line_comment (*tok*)
-  | `Blk_comm of block_comment (*tok*)
-]
-[@@deriving sexp_of]
+type variadic_parameter (* inlined *) = Token.t (* "..." *)
+
+type unit_type (* inlined *) = (Token.t (* "(" *) * Token.t (* ")" *))
+
+type self (* inlined *) = Token.t (* "self" *)
+
+type crate (* inlined *) = Token.t (* "crate" *)
+
+type remaining_field_pattern (* inlined *) = Token.t (* ".." *)
+
+type mutable_specifier (* inlined *) = Token.t (* "mut" *)
+
+type dummy_alias0 (* inlined *) = block_comment (*tok*)
+
+type field_identifier (* inlined *) = identifier (*tok*)
+
+type type_identifier (* inlined *) = identifier (*tok*)
 
 type negative_literal (* inlined *) = (
     Token.t (* "-" *)
@@ -1452,13 +1404,22 @@ type negative_literal (* inlined *) = (
       | `Float_lit of float_literal (*tok*)
     ]
 )
-[@@deriving sexp_of]
 
-type type_identifier (* inlined *) = identifier (*tok*)
-[@@deriving sexp_of]
+type dummy_alias1 (* inlined *) = line_comment (*tok*)
 
-type field_identifier (* inlined *) = identifier (*tok*)
-[@@deriving sexp_of]
+type token_binding_pattern (* inlined *) = (
+    metavariable (*tok*) * Token.t (* ":" *) * fragment_specifier
+)
+
+type comment (* inlined *) = [
+    `Line_comm_expl of line_comment_explicit (*tok*)
+  | `Blk_comm_expl of block_comment_explicit (*tok*)
+]
+
+type continue_expression (* inlined *) = (
+    Token.t (* "continue" *)
+  * loop_label option
+)
 
 type self_parameter (* inlined *) = (
     Token.t (* "&" *) option
@@ -1466,13 +1427,6 @@ type self_parameter (* inlined *) = (
   * Token.t (* "mut" *) option
   * Token.t (* "self" *)
 )
-[@@deriving sexp_of]
-
-type continue_expression (* inlined *) = (
-    Token.t (* "continue" *)
-  * loop_label option
-)
-[@@deriving sexp_of]
 
 type token_repetition_pattern (* inlined *) = (
     Token.t (* "$" *)
@@ -1482,7 +1436,6 @@ type token_repetition_pattern (* inlined *) = (
   * pat_1e84e62 option
   * anon_choice_PLUS_348fa54
 )
-[@@deriving sexp_of]
 
 type token_repetition (* inlined *) = (
     Token.t (* "$" *)
@@ -1492,12 +1445,10 @@ type token_repetition (* inlined *) = (
   * pat_1e84e62 option
   * anon_choice_PLUS_348fa54
 )
-[@@deriving sexp_of]
 
 type abstract_type (* inlined *) = (
-    Token.t (* "impl" *) * anon_choice_type_id_02b4436
+    Token.t (* "impl" *) * anon_choice_field_id_02b4436
 )
-[@@deriving sexp_of]
 
 type array_expression (* inlined *) = (
     Token.t (* "[" *)
@@ -1515,7 +1466,6 @@ type array_expression (* inlined *) = (
     ]
   * Token.t (* "]" *)
 )
-[@@deriving sexp_of]
 
 type array_type (* inlined *) = (
     Token.t (* "[" *)
@@ -1523,39 +1473,32 @@ type array_type (* inlined *) = (
   * (Token.t (* ";" *) * expression) option
   * Token.t (* "]" *)
 )
-[@@deriving sexp_of]
 
 type assignment_expression (* inlined *) = (
     expression * Token.t (* "=" *) * expression
 )
-[@@deriving sexp_of]
 
 type async_block (* inlined *) = (
     Token.t (* "async" *)
   * Token.t (* "move" *) option
   * block
 )
-[@@deriving sexp_of]
 
 type await_expression (* inlined *) = (
     expression * Token.t (* "." *) * Token.t (* "await" *)
 )
-[@@deriving sexp_of]
 
 type break_expression (* inlined *) = (
     Token.t (* "break" *)
   * loop_label option
   * expression option
 )
-[@@deriving sexp_of]
 
 type call_expression (* inlined *) = (expression * arguments)
-[@@deriving sexp_of]
 
 type captured_pattern (* inlined *) = (
     identifier (*tok*) * Token.t (* "@" *) * pattern
 )
-[@@deriving sexp_of]
 
 type closure_expression (* inlined *) = (
     Token.t (* "move" *) option
@@ -1565,7 +1508,6 @@ type closure_expression (* inlined *) = (
       | `Exp of expression
     ]
 )
-[@@deriving sexp_of]
 
 type compound_assignment_expr (* inlined *) = (
     expression
@@ -1583,22 +1525,18 @@ type compound_assignment_expr (* inlined *) = (
     ]
   * expression
 )
-[@@deriving sexp_of]
 
 type const_parameter (* inlined *) = (
     Token.t (* "const" *) * identifier (*tok*) * Token.t (* ":" *) * type_
 )
-[@@deriving sexp_of]
 
 type deep_ellipsis (* inlined *) = (
     Token.t (* "<..." *) * expression * Token.t (* "...>" *)
 )
-[@@deriving sexp_of]
 
 type dynamic_type (* inlined *) = (
-    Token.t (* "dyn" *) * anon_choice_type_id_02b4436
+    Token.t (* "dyn" *) * anon_choice_field_id_02b4436
 )
-[@@deriving sexp_of]
 
 type field_initializer (* inlined *) = (
     attribute_item list (* zero or more *)
@@ -1606,7 +1544,6 @@ type field_initializer (* inlined *) = (
   * Token.t (* ":" *)
   * expression
 )
-[@@deriving sexp_of]
 
 type field_pattern (* inlined *) = (
     Token.t (* "ref" *) option
@@ -1616,7 +1553,6 @@ type field_pattern (* inlined *) = (
       | `Id_COLON_pat of (identifier (*tok*) * Token.t (* ":" *) * pattern)
     ]
 )
-[@@deriving sexp_of]
 
 type for_expression (* inlined *) = (
     (loop_label * Token.t (* ":" *)) option
@@ -1626,7 +1562,6 @@ type for_expression (* inlined *) = (
   * expression
   * block
 )
-[@@deriving sexp_of]
 
 type generic_function (* inlined *) = (
     [
@@ -1637,32 +1572,26 @@ type generic_function (* inlined *) = (
   * Token.t (* "::" *)
   * type_arguments
 )
-[@@deriving sexp_of]
 
 type index_expression (* inlined *) = (
     expression * Token.t (* "[" *) * expression * Token.t (* "]" *)
 )
-[@@deriving sexp_of]
 
 type loop_expression (* inlined *) = (
     (loop_label * Token.t (* ":" *)) option
   * Token.t (* "loop" *)
   * block
 )
-[@@deriving sexp_of]
 
 type match_expression (* inlined *) = (
     Token.t (* "match" *) * expression * match_block
 )
-[@@deriving sexp_of]
 
 type member_access_ellipsis_expression (* inlined *) = (
     expression * Token.t (* "." *) * Token.t (* "..." *)
 )
-[@@deriving sexp_of]
 
 type mut_pattern (* inlined *) = (Token.t (* "mut" *) * pattern)
-[@@deriving sexp_of]
 
 type optional_type_parameter (* inlined *) = (
     [
@@ -1672,55 +1601,45 @@ type optional_type_parameter (* inlined *) = (
   * Token.t (* "=" *)
   * type_
 )
-[@@deriving sexp_of]
 
 type or_pattern (* inlined *) = (pattern * Token.t (* "|" *) * pattern)
-[@@deriving sexp_of]
 
 type parenthesized_expression (* inlined *) = (
     Token.t (* "(" *) * expression * Token.t (* ")" *)
 )
-[@@deriving sexp_of]
 
 type range_pattern (* inlined *) = (
     anon_choice_lit_pat_0884ef0
   * [ `DOTDOTDOT of Token.t (* "..." *) | `DOTDOTEQ of Token.t (* "..=" *) ]
   * anon_choice_lit_pat_0884ef0
 )
-[@@deriving sexp_of]
 
 type ref_pattern (* inlined *) = (Token.t (* "ref" *) * pattern)
-[@@deriving sexp_of]
 
 type reference_expression (* inlined *) = (
     Token.t (* "&" *)
   * Token.t (* "mut" *) option
   * expression
 )
-[@@deriving sexp_of]
 
 type reference_pattern (* inlined *) = (
     Token.t (* "&" *)
   * Token.t (* "mut" *) option
   * pattern
 )
-[@@deriving sexp_of]
 
 type removed_trait_bound (* inlined *) = (Token.t (* "?" *) * type_)
-[@@deriving sexp_of]
 
 type scoped_use_list (* inlined *) = (
     path option
   * Token.t (* "::" *)
   * use_list
 )
-[@@deriving sexp_of]
 
 type shorthand_field_initializer (* inlined *) = (
     attribute_item list (* zero or more *)
   * identifier (*tok*)
 )
-[@@deriving sexp_of]
 
 type slice_pattern (* inlined *) = (
     Token.t (* "[" *)
@@ -1728,7 +1647,6 @@ type slice_pattern (* inlined *) = (
   * Token.t (* "," *) option
   * Token.t (* "]" *)
 )
-[@@deriving sexp_of]
 
 type struct_expression (* inlined *) = (
     [
@@ -1739,10 +1657,9 @@ type struct_expression (* inlined *) = (
     ]
   * field_initializer_list
 )
-[@@deriving sexp_of]
 
 type struct_pattern (* inlined *) = (
-    anon_choice_type_id_2c46bcf
+    anon_choice_field_id_2c46bcf
   * Token.t (* "{" *)
   * (
         anon_choice_field_pat_8e757e8
@@ -1753,10 +1670,8 @@ type struct_pattern (* inlined *) = (
   * Token.t (* "," *) option
   * Token.t (* "}" *)
 )
-[@@deriving sexp_of]
 
 type try_expression (* inlined *) = (expression * Token.t (* "?" *))
-[@@deriving sexp_of]
 
 type tuple_expression (* inlined *) = (
     Token.t (* "(" *)
@@ -1767,7 +1682,6 @@ type tuple_expression (* inlined *) = (
   * expression option
   * Token.t (* ")" *)
 )
-[@@deriving sexp_of]
 
 type tuple_pattern (* inlined *) = (
     Token.t (* "(" *)
@@ -1775,16 +1689,14 @@ type tuple_pattern (* inlined *) = (
   * Token.t (* "," *) option
   * Token.t (* ")" *)
 )
-[@@deriving sexp_of]
 
 type tuple_struct_pattern (* inlined *) = (
-    anon_choice_type_id_f1f5a37
+    anon_choice_field_id_f1f5a37
   * Token.t (* "(" *)
   * anon_pat_rep_COMMA_pat_2a80f16 option
   * Token.t (* "," *) option
   * Token.t (* ")" *)
 )
-[@@deriving sexp_of]
 
 type type_binding (* inlined *) = (
     identifier (*tok*)
@@ -1792,12 +1704,10 @@ type type_binding (* inlined *) = (
   * Token.t (* "=" *)
   * type_
 )
-[@@deriving sexp_of]
 
 type type_cast_expression (* inlined *) = (
     expression * Token.t (* "as" *) * type_
 )
-[@@deriving sexp_of]
 
 type unary_expression (* inlined *) = (
     [
@@ -1807,21 +1717,17 @@ type unary_expression (* inlined *) = (
     ]
   * expression
 )
-[@@deriving sexp_of]
 
 type unsafe_block (* inlined *) = (Token.t (* "unsafe" *) * block)
-[@@deriving sexp_of]
 
 type use_as_clause (* inlined *) = (
     path * Token.t (* "as" *) * identifier (*tok*)
 )
-[@@deriving sexp_of]
 
 type use_wildcard (* inlined *) = (
     (path * Token.t (* "::" *)) option
   * Token.t (* "*" *)
 )
-[@@deriving sexp_of]
 
 type while_expression (* inlined *) = (
     (loop_label * Token.t (* ":" *)) option
@@ -1829,7 +1735,6 @@ type while_expression (* inlined *) = (
   * expression
   * block
 )
-[@@deriving sexp_of]
 
 type while_let_expression (* inlined *) = (
     (loop_label * Token.t (* ":" *)) option
@@ -1840,19 +1745,12 @@ type while_let_expression (* inlined *) = (
   * expression
   * block
 )
-[@@deriving sexp_of]
-
-type semgrep_expression (* inlined *) = (
-    Token.t (* "__SEMGREP_EXPRESSION" *) * expression
-)
-[@@deriving sexp_of]
 
 type semgrep_statement (* inlined *) = (
     Token.t (* "__SEMGREP_STATEMENT" *)
   * statement list (* one or more *)
 )
-[@@deriving sexp_of]
 
-let dump_tree root =
-  sexp_of_source_file root
-  |> Print_sexp.to_stdout
+type semgrep_expression (* inlined *) = (
+    Token.t (* "__SEMGREP_EXPRESSION" *) * expression
+)

@@ -2,15 +2,25 @@ File: semgrep-grammars/src/tree-sitter-rust/LICENSE
 Git repo name: tree-sitter-rust
 Latest commit in repo: d045b04b66d51c0ba8671e7ce1ee23a9f286b7d7
 Last change in file:
-  commit 2beedf23bedbd7b02b416518693e8eed3944d4a0
-  Author: Eric Shimizu Karbstein <gr41.j4ck@gmail.com>
-  Date:   Tue Jan 5 15:00:48 2021 -0300
+  commit d045b04b66d51c0ba8671e7ce1ee23a9f286b7d7
+  Author: かわえもん <me@kawaemon.dev>
+  Date:   Mon Dec 13 03:08:54 2021 +0900
   
-      Add const block expression (#97)
+      Add Generic Associated Types support (#124)
       
-      * Add const block expression
+      * tests: put tests for GAT
       
-      * Fix const block pattern test
+      * feat: support GAT
+      
+      * tests: add normal type parameter to generic associated type
+      
+      * tests: add checks for type binding
+      
+      * feat: support type binding to have type arguments
+      
+      * chore: regenerate parser
+      
+      * chore: fix formatting
 ---
 File: semgrep-grammars/src/tree-sitter-rust/grammar.js
 Git repo name: tree-sitter-rust
@@ -38,7 +48,7 @@ Last change in file:
 ---
 File: semgrep-grammars/src/semgrep-rust/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: 8e7c45af00d413975d65265b70393866d1c0ad8e
+Latest commit in repo: b6966e40776079d0736ff834fa042e225aa49034
 Last change in file:
   commit 8e7c45af00d413975d65265b70393866d1c0ad8e
   Author: pad <pad@r2c.dev>
