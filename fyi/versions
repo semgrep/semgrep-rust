@@ -48,11 +48,12 @@ Last change in file:
 ---
 File: semgrep-grammars/src/semgrep-rust/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: a6d9dd986b280db157856326be23dc4752cf5111
+Latest commit in repo: 90691388e3616496ba8636e0b5805055d19ef538
 Last change in file:
-  commit 34518089702c20c40f6335c1bb0d79222b4cc199
+  commit 20a8d57b44e94eaac65ac7930a063fc5709aa7a8
+  Merge: 08c0c47 a6d9dd9
   Author: Heejong Lee <heejong@gmail.com>
-  Date:   Wed Jul 5 22:59:33 2023 -0700
+  Date:   Thu Jul 6 12:14:35 2023 -0700
   
-      add typed metavar syntax extension to rust
+      Merge branch 'main' into brandon/rust-ellipsis-metavariables
 ---
