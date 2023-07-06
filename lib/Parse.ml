@@ -1998,7 +1998,10 @@ let children_regexps : (string * Run.exp option) list = [
   Some (
     Seq [
       Token (Literal "(");
-      Token (Name "expression");
+      Alt [|
+        Token (Name "expression");
+        Token (Name "semgrep_typed_metavar");
+      |];
       Token (Literal ")");
     ];
   );
@@ -2388,6 +2391,14 @@ let children_regexps : (string * Run.exp option) list = [
       );
       Token (Literal "::");
       Token (Name "use_list");
+    ];
+  );
+  "semgrep_typed_metavar",
+  Some (
+    Seq [
+      Token (Name "identifier");
+      Token (Literal ":");
+      Token (Name "type");
     ];
   );
   "shorthand_field_initializer",
@@ -8155,7 +8166,18 @@ and trans_parenthesized_expression ((kind, body) : mt) : CST.parenthesized_expre
       | Seq [v0; v1; v2] ->
           (
             Run.trans_token (Run.matcher_token v0),
-            trans_expression (Run.matcher_token v1),
+            (match v1 with
+            | Alt (0, v) ->
+                `Exp (
+                  trans_expression (Run.matcher_token v)
+                )
+            | Alt (1, v) ->
+                `Semg_typed_meta (
+                  trans_semgrep_typed_metavar (Run.matcher_token v)
+                )
+            | _ -> assert false
+            )
+            ,
             Run.trans_token (Run.matcher_token v2)
           )
       | _ -> assert false
@@ -9355,6 +9377,20 @@ and trans_scoped_use_list ((kind, body) : mt) : CST.scoped_use_list =
             ,
             Run.trans_token (Run.matcher_token v1),
             trans_use_list (Run.matcher_token v2)
+          )
+      | _ -> assert false
+      )
+  | Leaf _ -> assert false
+
+and trans_semgrep_typed_metavar ((kind, body) : mt) : CST.semgrep_typed_metavar =
+  match body with
+  | Children v ->
+      (match v with
+      | Seq [v0; v1; v2] ->
+          (
+            trans_identifier (Run.matcher_token v0),
+            Run.trans_token (Run.matcher_token v1),
+            trans_type_ (Run.matcher_token v2)
           )
       | _ -> assert false
       )

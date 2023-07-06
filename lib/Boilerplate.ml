@@ -1660,7 +1660,16 @@ and map_expression (env : env) (x : CST.expression) =
     )
   | `Paren_exp (v1, v2, v3) -> R.Case ("Paren_exp",
       let v1 = (* "(" *) token env v1 in
-      let v2 = map_expression env v2 in
+      let v2 =
+        (match v2 with
+        | `Exp x -> R.Case ("Exp",
+            map_expression env x
+          )
+        | `Semg_typed_meta x -> R.Case ("Semg_typed_meta",
+            map_semgrep_typed_metavar env x
+          )
+        )
+      in
       let v3 = (* ")" *) token env v3 in
       R.Tuple [v1; v2; v3]
     )
@@ -2811,6 +2820,12 @@ and map_scoped_type_identifier_in_expression_position (env : env) ((v1, v2, v3) 
   in
   let v2 = (* "::" *) token env v2 in
   let v3 = (* identifier *) token env v3 in
+  R.Tuple [v1; v2; v3]
+
+and map_semgrep_typed_metavar (env : env) ((v1, v2, v3) : CST.semgrep_typed_metavar) =
+  let v1 = (* identifier *) token env v1 in
+  let v2 = (* ":" *) token env v2 in
+  let v3 = map_type_ env v3 in
   R.Tuple [v1; v2; v3]
 
 and map_statement (env : env) (x : CST.statement) =

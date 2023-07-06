@@ -699,7 +699,11 @@ and expression = [
           | `Exp of expression
         ]
     )
-  | `Paren_exp of (Token.t (* "(" *) * expression * Token.t (* ")" *))
+  | `Paren_exp of (
+        Token.t (* "(" *)
+      * [ `Exp of expression | `Semg_typed_meta of semgrep_typed_metavar ]
+      * Token.t (* ")" *)
+    )
   | `Struct_exp of (
         [
             `Id of identifier (*tok*)
@@ -1173,6 +1177,8 @@ and scoped_type_identifier_in_expression_position = (
   * identifier (*tok*)
 )
 
+and semgrep_typed_metavar = (identifier (*tok*) * Token.t (* ":" *) * type_)
+
 and statement = [
     `Exp_stmt of expression_statement
   | `Choice_choice_const_item of declaration_statement
@@ -1605,7 +1611,9 @@ type optional_type_parameter (* inlined *) = (
 type or_pattern (* inlined *) = (pattern * Token.t (* "|" *) * pattern)
 
 type parenthesized_expression (* inlined *) = (
-    Token.t (* "(" *) * expression * Token.t (* ")" *)
+    Token.t (* "(" *)
+  * [ `Exp of expression | `Semg_typed_meta of semgrep_typed_metavar ]
+  * Token.t (* ")" *)
 )
 
 type range_pattern (* inlined *) = (

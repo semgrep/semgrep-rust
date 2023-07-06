@@ -2,15 +2,25 @@ File: semgrep-grammars/src/tree-sitter-rust/LICENSE
 Git repo name: tree-sitter-rust
 Latest commit in repo: d045b04b66d51c0ba8671e7ce1ee23a9f286b7d7
 Last change in file:
-  commit 79f3003ca601783a6cff3c03fce75523298d64fa
-  Author: Maxim Sokolov <maxim0xff@gmail.com>
-  Date:   Wed Mar 29 14:32:36 2017 +0300
+  commit d045b04b66d51c0ba8671e7ce1ee23a9f286b7d7
+  Author: かわえもん <me@kawaemon.dev>
+  Date:   Mon Dec 13 03:08:54 2021 +0900
   
-      Init
+      Add Generic Associated Types support (#124)
       
-      Based on
-      https://github.com/tree-sitter/tree-sitter-javascript
-      https://github.com/tree-sitter/tree-sitter-go
+      * tests: put tests for GAT
+      
+      * feat: support GAT
+      
+      * tests: add normal type parameter to generic associated type
+      
+      * tests: add checks for type binding
+      
+      * feat: support type binding to have type arguments
+      
+      * chore: regenerate parser
+      
+      * chore: fix formatting
 ---
 File: semgrep-grammars/src/tree-sitter-rust/grammar.js
 Git repo name: tree-sitter-rust
@@ -38,11 +48,11 @@ Last change in file:
 ---
 File: semgrep-grammars/src/semgrep-rust/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: 08c0c4717e590caf6e653ba3ee8ac572ea2f9bf2
+Latest commit in repo: a6d9dd986b280db157856326be23dc4752cf5111
 Last change in file:
-  commit 08c0c4717e590caf6e653ba3ee8ac572ea2f9bf2
-  Author: brandonspark <wu.brandonj@gmail.com>
-  Date:   Mon Jul 3 15:57:58 2023 -0400
+  commit 34518089702c20c40f6335c1bb0d79222b4cc199
+  Author: Heejong Lee <heejong@gmail.com>
+  Date:   Wed Jul 5 22:59:33 2023 -0700
   
-      add ellipsis metavars for rust
+      add typed metavar syntax extension to rust
 ---
