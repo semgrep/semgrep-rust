@@ -291,6 +291,12 @@ type anon_choice_SEMI_226cc40 = [
   | `Decl_list of declaration_list
 ]
 
+and anon_choice_ellips_738a19f = [
+    `Ellips of Token.t (* "..." *)
+  | `Meta_item of meta_item
+  | `Lit of literal
+]
+
 and anon_choice_field_id_02b4436 = [
     `Id of identifier (*tok*)
   | `Scoped_type_id of scoped_type_identifier
@@ -344,11 +350,6 @@ and anon_choice_life_859e88f = [
 and anon_choice_lit_pat_0884ef0 = [
     `Lit_pat of literal_pattern
   | `Choice_self of path
-]
-
-and anon_choice_meta_item_fefa160 = [
-    `Meta_item of meta_item
-  | `Lit of literal
 ]
 
 and anon_choice_param_2c23cdc = [
@@ -968,8 +969,8 @@ and match_pattern = (pattern * (Token.t (* "if" *) * expression) option)
 and meta_arguments = (
     Token.t (* "(" *)
   * (
-        anon_choice_meta_item_fefa160
-      * (Token.t (* "," *) * anon_choice_meta_item_fefa160)
+        anon_choice_ellips_738a19f
+      * (Token.t (* "," *) * anon_choice_ellips_738a19f)
           list (* zero or more *)
     )
       option

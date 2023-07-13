@@ -1799,6 +1799,7 @@ let children_regexps : (string * Run.exp option) list = [
       Opt (
         Seq [
           Alt [|
+            Token (Name "ellipsis");
             Token (Name "meta_item");
             Token (Name "literal");
           |];
@@ -1806,6 +1807,7 @@ let children_regexps : (string * Run.exp option) list = [
             Seq [
               Token (Literal ",");
               Alt [|
+                Token (Name "ellipsis");
                 Token (Name "meta_item");
                 Token (Name "literal");
               |];
@@ -7688,10 +7690,14 @@ and trans_meta_arguments ((kind, body) : mt) : CST.meta_arguments =
                     (
                       (match v0 with
                       | Alt (0, v) ->
+                          `Ellips (
+                            trans_ellipsis (Run.matcher_token v)
+                          )
+                      | Alt (1, v) ->
                           `Meta_item (
                             trans_meta_item (Run.matcher_token v)
                           )
-                      | Alt (1, v) ->
+                      | Alt (2, v) ->
                           `Lit (
                             trans_literal (Run.matcher_token v)
                           )
@@ -7706,10 +7712,14 @@ and trans_meta_arguments ((kind, body) : mt) : CST.meta_arguments =
                                 Run.trans_token (Run.matcher_token v0),
                                 (match v1 with
                                 | Alt (0, v) ->
+                                    `Ellips (
+                                      trans_ellipsis (Run.matcher_token v)
+                                    )
+                                | Alt (1, v) ->
                                     `Meta_item (
                                       trans_meta_item (Run.matcher_token v)
                                     )
-                                | Alt (1, v) ->
+                                | Alt (2, v) ->
                                     `Lit (
                                       trans_literal (Run.matcher_token v)
                                     )

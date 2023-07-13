@@ -637,6 +637,19 @@ let rec map_anon_choice_SEMI_226cc40 (env : env) (x : CST.anon_choice_SEMI_226cc
     )
   )
 
+and map_anon_choice_ellips_738a19f (env : env) (x : CST.anon_choice_ellips_738a19f) =
+  (match x with
+  | `Ellips tok -> R.Case ("Ellips",
+      (* "..." *) token env tok
+    )
+  | `Meta_item x -> R.Case ("Meta_item",
+      map_meta_item env x
+    )
+  | `Lit x -> R.Case ("Lit",
+      map_literal env x
+    )
+  )
+
 and map_anon_choice_field_id_02b4436 (env : env) (x : CST.anon_choice_field_id_02b4436) =
   (match x with
   | `Id tok -> R.Case ("Id",
@@ -755,16 +768,6 @@ and map_anon_choice_lit_pat_0884ef0 (env : env) (x : CST.anon_choice_lit_pat_088
     )
   | `Choice_self x -> R.Case ("Choice_self",
       map_path env x
-    )
-  )
-
-and map_anon_choice_meta_item_fefa160 (env : env) (x : CST.anon_choice_meta_item_fefa160) =
-  (match x with
-  | `Meta_item x -> R.Case ("Meta_item",
-      map_meta_item env x
-    )
-  | `Lit x -> R.Case ("Lit",
-      map_literal env x
     )
   )
 
@@ -2319,11 +2322,11 @@ and map_meta_arguments (env : env) ((v1, v2, v3, v4) : CST.meta_arguments) =
   let v2 =
     (match v2 with
     | Some (v1, v2) -> R.Option (Some (
-        let v1 = map_anon_choice_meta_item_fefa160 env v1 in
+        let v1 = map_anon_choice_ellips_738a19f env v1 in
         let v2 =
           R.List (List.map (fun (v1, v2) ->
             let v1 = (* "," *) token env v1 in
-            let v2 = map_anon_choice_meta_item_fefa160 env v2 in
+            let v2 = map_anon_choice_ellips_738a19f env v2 in
             R.Tuple [v1; v2]
           ) v2)
         in

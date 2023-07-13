@@ -48,12 +48,11 @@ Last change in file:
 ---
 File: semgrep-grammars/src/semgrep-rust/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: 90691388e3616496ba8636e0b5805055d19ef538
+Latest commit in repo: b78c74234aec1583b1b25c02971ae66629436243
 Last change in file:
-  commit 20a8d57b44e94eaac65ac7930a063fc5709aa7a8
-  Merge: 08c0c47 a6d9dd9
-  Author: Heejong Lee <heejong@gmail.com>
-  Date:   Thu Jul 6 12:14:35 2023 -0700
+  commit 30d5c5bb40ce015569c29121b37a69c023d07755
+  Author: Andre Kuhlenschmidt <andre@semgrep.com>
+  Date:   Thu Jul 13 09:14:49 2023 -0700
   
-      Merge branch 'main' into brandon/rust-ellipsis-metavariables
+      Add ellipsis to rust attribute arguments
 ---
