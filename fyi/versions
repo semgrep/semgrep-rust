@@ -1,58 +1,49 @@
 File: semgrep-grammars/src/tree-sitter-rust/LICENSE
 Git repo name: tree-sitter-rust
-Latest commit in repo: d045b04b66d51c0ba8671e7ce1ee23a9f286b7d7
+Latest commit in repo: b255b1751fbdae3a5d8a3b8c1a9ed065bd281c72
 Last change in file:
-  commit d045b04b66d51c0ba8671e7ce1ee23a9f286b7d7
-  Author: かわえもん <me@kawaemon.dev>
-  Date:   Mon Dec 13 03:08:54 2021 +0900
+  commit 79f3003ca601783a6cff3c03fce75523298d64fa
+  gpg: Signature made Wed 29 Mar 2017 09:15:16 AM PDT
+  gpg:                using RSA key 9FADA88FC0824C9E
+  gpg: Can't check signature: No public key
+  Author: Maxim Sokolov <maxim0xff@gmail.com>
+  Date:   Wed Mar 29 14:32:36 2017 +0300
   
-      Add Generic Associated Types support (#124)
+      Init
       
-      * tests: put tests for GAT
-      
-      * feat: support GAT
-      
-      * tests: add normal type parameter to generic associated type
-      
-      * tests: add checks for type binding
-      
-      * feat: support type binding to have type arguments
-      
-      * chore: regenerate parser
-      
-      * chore: fix formatting
+      Based on
+      https://github.com/tree-sitter/tree-sitter-javascript
+      https://github.com/tree-sitter/tree-sitter-go
 ---
 File: semgrep-grammars/src/tree-sitter-rust/grammar.js
 Git repo name: tree-sitter-rust
-Latest commit in repo: d045b04b66d51c0ba8671e7ce1ee23a9f286b7d7
+Latest commit in repo: b255b1751fbdae3a5d8a3b8c1a9ed065bd281c72
 Last change in file:
-  commit d045b04b66d51c0ba8671e7ce1ee23a9f286b7d7
-  Author: かわえもん <me@kawaemon.dev>
-  Date:   Mon Dec 13 03:08:54 2021 +0900
+  commit b255b1751fbdae3a5d8a3b8c1a9ed065bd281c72
+  Author: Max Brunsfeld <maxbrunsfeld@gmail.com>
+  Date:   Fri Feb 4 12:52:14 2022 -0800
   
-      Add Generic Associated Types support (#124)
+      Make expression_statement visible
       
-      * tests: put tests for GAT
-      
-      * feat: support GAT
-      
-      * tests: add normal type parameter to generic associated type
-      
-      * tests: add checks for type binding
-      
-      * feat: support type binding to have type arguments
-      
-      * chore: regenerate parser
-      
-      * chore: fix formatting
+      Co-Authored-By: Nathan Sobo <nathan@zed.dev>
 ---
 File: semgrep-grammars/src/semgrep-rust/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: b78c74234aec1583b1b25c02971ae66629436243
+Latest commit in repo: 5218c675f7c7b1016f265701aac3a5fa8f56f8a7
 Last change in file:
-  commit 30d5c5bb40ce015569c29121b37a69c023d07755
-  Author: Andre Kuhlenschmidt <andre@semgrep.com>
-  Date:   Thu Jul 13 09:14:49 2023 -0700
+  commit c4e674d7b13cb66c6fb987e94585837e0a4227c0
+  gpg: Signature made Tue 07 Nov 2023 03:28:33 PM PST
+  gpg:                using RSA key C1930C5F9C9E0472DCF9ECC97D71116F505E5145
+  gpg: Good signature from "Nathaniel Mote <nat@semgrep.com>" [ultimate]
+  gpg:                 aka "Nathaniel Mote <nat@r2c.dev>" [ultimate]
+  gpg:                 aka "Nathaniel Mote <nat@natmote.net>" [ultimate]
+  Author: Nat Mote <nat@semgrep.com>
+  Date:   Tue Nov 7 15:14:55 2023 -0800
   
-      Add ellipsis to rust attribute arguments
+      chore: Update tree-sitter-rust (1/n)
+      
+      We are way behind on tree-sitter-rust. When I tried to do a big jump I
+      ran into a bunch of problems, so I'm going to do it bit by bit.
+      
+      Test plan: Automated tests
 ---

@@ -939,7 +939,7 @@ let children_regexps : (string * Run.exp option) list = [
   "call_expression",
   Some (
     Seq [
-      Token (Name "expression");
+      Token (Name "expression_except_range");
       Token (Name "arguments");
     ];
   );
@@ -1194,6 +1194,16 @@ let children_regexps : (string * Run.exp option) list = [
   "expression",
   Some (
     Alt [|
+      Token (Name "expression_except_range");
+      Token (Name "range_expression");
+      Token (Name "ellipsis");
+      Token (Name "deep_ellipsis");
+      Token (Name "member_access_ellipsis_expression");
+    |];
+  );
+  "expression_except_range",
+  Some (
+    Alt [|
       Token (Name "unary_expression");
       Token (Name "reference_expression");
       Token (Name "try_expression");
@@ -1201,9 +1211,9 @@ let children_regexps : (string * Run.exp option) list = [
       Token (Name "assignment_expression");
       Token (Name "compound_assignment_expr");
       Token (Name "type_cast_expression");
-      Token (Name "range_expression");
       Token (Name "call_expression");
       Token (Name "return_expression");
+      Token (Name "yield_expression");
       Token (Name "literal");
       Token (Name "identifier");
       Alt [|
@@ -1238,6 +1248,13 @@ let children_regexps : (string * Run.exp option) list = [
       Token (Name "tuple_expression");
       Token (Name "macro_invocation");
       Token (Name "unit_expression");
+      Token (Name "break_expression");
+      Token (Name "continue_expression");
+      Token (Name "index_expression");
+      Token (Name "metavariable");
+      Token (Name "closure_expression");
+      Token (Name "parenthesized_expression");
+      Token (Name "struct_expression");
       Alt [|
         Token (Name "unsafe_block");
         Token (Name "async_block");
@@ -1251,16 +1268,6 @@ let children_regexps : (string * Run.exp option) list = [
         Token (Name "for_expression");
         Token (Name "const_block");
       |];
-      Token (Name "break_expression");
-      Token (Name "continue_expression");
-      Token (Name "index_expression");
-      Token (Name "metavariable");
-      Token (Name "closure_expression");
-      Token (Name "parenthesized_expression");
-      Token (Name "struct_expression");
-      Token (Name "ellipsis");
-      Token (Name "deep_ellipsis");
-      Token (Name "member_access_ellipsis_expression");
     |];
   );
   "expression_statement",
@@ -3158,6 +3165,16 @@ let children_regexps : (string * Run.exp option) list = [
       Token (Name "expression");
       Token (Name "block");
     ];
+  );
+  "yield_expression",
+  Some (
+    Alt [|
+      Seq [
+        Token (Literal "yield");
+        Token (Name "expression");
+      ];
+      Token (Literal "yield");
+    |];
   );
   "semgrep_statement",
   Some (
@@ -5731,7 +5748,7 @@ and trans_call_expression ((kind, body) : mt) : CST.call_expression =
       (match v with
       | Seq [v0; v1] ->
           (
-            trans_expression (Run.matcher_token v0),
+            trans_expression_except_range (Run.matcher_token v0),
             trans_arguments (Run.matcher_token v1)
           )
       | _ -> assert false
@@ -6309,6 +6326,34 @@ and trans_expression ((kind, body) : mt) : CST.expression =
   | Children v ->
       (match v with
       | Alt (0, v) ->
+          `Exp_except_range (
+            trans_expression_except_range (Run.matcher_token v)
+          )
+      | Alt (1, v) ->
+          `Range_exp (
+            trans_range_expression (Run.matcher_token v)
+          )
+      | Alt (2, v) ->
+          `Ellips (
+            trans_ellipsis (Run.matcher_token v)
+          )
+      | Alt (3, v) ->
+          `Deep_ellips (
+            trans_deep_ellipsis (Run.matcher_token v)
+          )
+      | Alt (4, v) ->
+          `Member_access_ellips_exp (
+            trans_member_access_ellipsis_expression (Run.matcher_token v)
+          )
+      | _ -> assert false
+      )
+  | Leaf _ -> assert false
+
+and trans_expression_except_range ((kind, body) : mt) : CST.expression_except_range =
+  match body with
+  | Children v ->
+      (match v with
+      | Alt (0, v) ->
           `Un_exp (
             trans_unary_expression (Run.matcher_token v)
           )
@@ -6337,16 +6382,16 @@ and trans_expression ((kind, body) : mt) : CST.expression =
             trans_type_cast_expression (Run.matcher_token v)
           )
       | Alt (7, v) ->
-          `Range_exp (
-            trans_range_expression (Run.matcher_token v)
-          )
-      | Alt (8, v) ->
           `Call_exp (
             trans_call_expression (Run.matcher_token v)
           )
-      | Alt (9, v) ->
+      | Alt (8, v) ->
           `Ret_exp (
             trans_return_expression (Run.matcher_token v)
+          )
+      | Alt (9, v) ->
+          `Yield_exp (
+            trans_yield_expression (Run.matcher_token v)
           )
       | Alt (10, v) ->
           `Lit (
@@ -6481,6 +6526,34 @@ and trans_expression ((kind, body) : mt) : CST.expression =
             trans_unit_expression (Run.matcher_token v)
           )
       | Alt (23, v) ->
+          `Brk_exp (
+            trans_break_expression (Run.matcher_token v)
+          )
+      | Alt (24, v) ->
+          `Cont_exp (
+            trans_continue_expression (Run.matcher_token v)
+          )
+      | Alt (25, v) ->
+          `Index_exp (
+            trans_index_expression (Run.matcher_token v)
+          )
+      | Alt (26, v) ->
+          `Meta (
+            trans_metavariable (Run.matcher_token v)
+          )
+      | Alt (27, v) ->
+          `Clos_exp (
+            trans_closure_expression (Run.matcher_token v)
+          )
+      | Alt (28, v) ->
+          `Paren_exp (
+            trans_parenthesized_expression (Run.matcher_token v)
+          )
+      | Alt (29, v) ->
+          `Struct_exp (
+            trans_struct_expression (Run.matcher_token v)
+          )
+      | Alt (30, v) ->
           `Choice_unsafe_blk (
             (match v with
             | Alt (0, v) ->
@@ -6529,46 +6602,6 @@ and trans_expression ((kind, body) : mt) : CST.expression =
                 )
             | _ -> assert false
             )
-          )
-      | Alt (24, v) ->
-          `Brk_exp (
-            trans_break_expression (Run.matcher_token v)
-          )
-      | Alt (25, v) ->
-          `Cont_exp (
-            trans_continue_expression (Run.matcher_token v)
-          )
-      | Alt (26, v) ->
-          `Index_exp (
-            trans_index_expression (Run.matcher_token v)
-          )
-      | Alt (27, v) ->
-          `Meta (
-            trans_metavariable (Run.matcher_token v)
-          )
-      | Alt (28, v) ->
-          `Clos_exp (
-            trans_closure_expression (Run.matcher_token v)
-          )
-      | Alt (29, v) ->
-          `Paren_exp (
-            trans_parenthesized_expression (Run.matcher_token v)
-          )
-      | Alt (30, v) ->
-          `Struct_exp (
-            trans_struct_expression (Run.matcher_token v)
-          )
-      | Alt (31, v) ->
-          `Ellips (
-            trans_ellipsis (Run.matcher_token v)
-          )
-      | Alt (32, v) ->
-          `Deep_ellips (
-            trans_deep_ellipsis (Run.matcher_token v)
-          )
-      | Alt (33, v) ->
-          `Member_access_ellips_exp (
-            trans_member_access_ellipsis_expression (Run.matcher_token v)
           )
       | _ -> assert false
       )
@@ -11331,6 +11364,29 @@ and trans_while_let_expression ((kind, body) : mt) : CST.while_let_expression =
             Run.trans_token (Run.matcher_token v4),
             trans_expression (Run.matcher_token v5),
             trans_block (Run.matcher_token v6)
+          )
+      | _ -> assert false
+      )
+  | Leaf _ -> assert false
+
+and trans_yield_expression ((kind, body) : mt) : CST.yield_expression =
+  match body with
+  | Children v ->
+      (match v with
+      | Alt (0, v) ->
+          `Yield_exp (
+            (match v with
+            | Seq [v0; v1] ->
+                (
+                  Run.trans_token (Run.matcher_token v0),
+                  trans_expression (Run.matcher_token v1)
+                )
+            | _ -> assert false
+            )
+          )
+      | Alt (1, v) ->
+          `Yield (
+            Run.trans_token (Run.matcher_token v)
           )
       | _ -> assert false
       )

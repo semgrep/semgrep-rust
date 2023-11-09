@@ -1373,325 +1373,11 @@ and map_enum_variant_list (env : env) ((v1, v2, v3, v4) : CST.enum_variant_list)
 
 and map_expression (env : env) (x : CST.expression) =
   (match x with
-  | `Un_exp (v1, v2) -> R.Case ("Un_exp",
-      let v1 =
-        (match v1 with
-        | `DASH tok -> R.Case ("DASH",
-            (* "-" *) token env tok
-          )
-        | `STAR tok -> R.Case ("STAR",
-            (* "*" *) token env tok
-          )
-        | `BANG tok -> R.Case ("BANG",
-            (* "!" *) token env tok
-          )
-        )
-      in
-      let v2 = map_expression env v2 in
-      R.Tuple [v1; v2]
-    )
-  | `Ref_exp (v1, v2, v3) -> R.Case ("Ref_exp",
-      let v1 = (* "&" *) token env v1 in
-      let v2 =
-        (match v2 with
-        | Some tok -> R.Option (Some (
-            (* "mut" *) token env tok
-          ))
-        | None -> R.Option None)
-      in
-      let v3 = map_expression env v3 in
-      R.Tuple [v1; v2; v3]
-    )
-  | `Try_exp (v1, v2) -> R.Case ("Try_exp",
-      let v1 = map_expression env v1 in
-      let v2 = (* "?" *) token env v2 in
-      R.Tuple [v1; v2]
-    )
-  | `Bin_exp x -> R.Case ("Bin_exp",
-      map_binary_expression env x
-    )
-  | `Assign_exp (v1, v2, v3) -> R.Case ("Assign_exp",
-      let v1 = map_expression env v1 in
-      let v2 = (* "=" *) token env v2 in
-      let v3 = map_expression env v3 in
-      R.Tuple [v1; v2; v3]
-    )
-  | `Comp_assign_expr (v1, v2, v3) -> R.Case ("Comp_assign_expr",
-      let v1 = map_expression env v1 in
-      let v2 =
-        (match v2 with
-        | `PLUSEQ tok -> R.Case ("PLUSEQ",
-            (* "+=" *) token env tok
-          )
-        | `DASHEQ tok -> R.Case ("DASHEQ",
-            (* "-=" *) token env tok
-          )
-        | `STAREQ tok -> R.Case ("STAREQ",
-            (* "*=" *) token env tok
-          )
-        | `SLASHEQ tok -> R.Case ("SLASHEQ",
-            (* "/=" *) token env tok
-          )
-        | `PERCEQ tok -> R.Case ("PERCEQ",
-            (* "%=" *) token env tok
-          )
-        | `AMPEQ tok -> R.Case ("AMPEQ",
-            (* "&=" *) token env tok
-          )
-        | `BAREQ tok -> R.Case ("BAREQ",
-            (* "|=" *) token env tok
-          )
-        | `HATEQ tok -> R.Case ("HATEQ",
-            (* "^=" *) token env tok
-          )
-        | `LTLTEQ tok -> R.Case ("LTLTEQ",
-            (* "<<=" *) token env tok
-          )
-        | `GTGTEQ tok -> R.Case ("GTGTEQ",
-            (* ">>=" *) token env tok
-          )
-        )
-      in
-      let v3 = map_expression env v3 in
-      R.Tuple [v1; v2; v3]
-    )
-  | `Type_cast_exp (v1, v2, v3) -> R.Case ("Type_cast_exp",
-      let v1 = map_expression env v1 in
-      let v2 = (* "as" *) token env v2 in
-      let v3 = map_type_ env v3 in
-      R.Tuple [v1; v2; v3]
+  | `Exp_except_range x -> R.Case ("Exp_except_range",
+      map_expression_except_range env x
     )
   | `Range_exp x -> R.Case ("Range_exp",
       map_range_expression env x
-    )
-  | `Call_exp (v1, v2) -> R.Case ("Call_exp",
-      let v1 = map_expression env v1 in
-      let v2 = map_arguments env v2 in
-      R.Tuple [v1; v2]
-    )
-  | `Ret_exp x -> R.Case ("Ret_exp",
-      map_return_expression env x
-    )
-  | `Lit x -> R.Case ("Lit",
-      map_literal env x
-    )
-  | `Id tok -> R.Case ("Id",
-      (* identifier *) token env tok
-    )
-  | `Choice_u8 x -> R.Case ("Choice_u8",
-      map_anon_choice_u8_6dad923 env x
-    )
-  | `Choice_defa x -> R.Case ("Choice_defa",
-      map_reserved_identifier env x
-    )
-  | `Self tok -> R.Case ("Self",
-      (* "self" *) token env tok
-    )
-  | `Scoped_id x -> R.Case ("Scoped_id",
-      map_scoped_identifier env x
-    )
-  | `Gene_func (v1, v2, v3) -> R.Case ("Gene_func",
-      let v1 =
-        (match v1 with
-        | `Id tok -> R.Case ("Id",
-            (* identifier *) token env tok
-          )
-        | `Scoped_id x -> R.Case ("Scoped_id",
-            map_scoped_identifier env x
-          )
-        | `Field_exp x -> R.Case ("Field_exp",
-            map_field_expression env x
-          )
-        )
-      in
-      let v2 = (* "::" *) token env v2 in
-      let v3 = map_type_arguments env v3 in
-      R.Tuple [v1; v2; v3]
-    )
-  | `Await_exp (v1, v2, v3) -> R.Case ("Await_exp",
-      let v1 = map_expression env v1 in
-      let v2 = (* "." *) token env v2 in
-      let v3 = (* "await" *) token env v3 in
-      R.Tuple [v1; v2; v3]
-    )
-  | `Field_exp x -> R.Case ("Field_exp",
-      map_field_expression env x
-    )
-  | `Array_exp (v1, v2, v3, v4) -> R.Case ("Array_exp",
-      let v1 = (* "[" *) token env v1 in
-      let v2 = R.List (List.map (map_attribute_item env) v2) in
-      let v3 =
-        (match v3 with
-        | `Exp_SEMI_exp (v1, v2, v3) -> R.Case ("Exp_SEMI_exp",
-            let v1 = map_expression env v1 in
-            let v2 = (* ";" *) token env v2 in
-            let v3 = map_expression env v3 in
-            R.Tuple [v1; v2; v3]
-          )
-        | `Opt_exp_rep_COMMA_exp_opt_COMMA (v1, v2) -> R.Case ("Opt_exp_rep_COMMA_exp_opt_COMMA",
-            let v1 =
-              (match v1 with
-              | Some (v1, v2) -> R.Option (Some (
-                  let v1 = map_expression env v1 in
-                  let v2 =
-                    R.List (List.map (fun (v1, v2) ->
-                      let v1 = (* "," *) token env v1 in
-                      let v2 = map_expression env v2 in
-                      R.Tuple [v1; v2]
-                    ) v2)
-                  in
-                  R.Tuple [v1; v2]
-                ))
-              | None -> R.Option None)
-            in
-            let v2 =
-              (match v2 with
-              | Some tok -> R.Option (Some (
-                  (* "," *) token env tok
-                ))
-              | None -> R.Option None)
-            in
-            R.Tuple [v1; v2]
-          )
-        )
-      in
-      let v4 = (* "]" *) token env v4 in
-      R.Tuple [v1; v2; v3; v4]
-    )
-  | `Tuple_exp (v1, v2, v3, v4, v5, v6, v7) -> R.Case ("Tuple_exp",
-      let v1 = (* "(" *) token env v1 in
-      let v2 = R.List (List.map (map_attribute_item env) v2) in
-      let v3 = map_expression env v3 in
-      let v4 = (* "," *) token env v4 in
-      let v5 =
-        R.List (List.map (fun (v1, v2) ->
-          let v1 = map_expression env v1 in
-          let v2 = (* "," *) token env v2 in
-          R.Tuple [v1; v2]
-        ) v5)
-      in
-      let v6 =
-        (match v6 with
-        | Some x -> R.Option (Some (
-            map_expression env x
-          ))
-        | None -> R.Option None)
-      in
-      let v7 = (* ")" *) token env v7 in
-      R.Tuple [v1; v2; v3; v4; v5; v6; v7]
-    )
-  | `Macro_invo x -> R.Case ("Macro_invo",
-      map_macro_invocation env x
-    )
-  | `Unit_exp (v1, v2) -> R.Case ("Unit_exp",
-      let v1 = (* "(" *) token env v1 in
-      let v2 = (* ")" *) token env v2 in
-      R.Tuple [v1; v2]
-    )
-  | `Choice_unsafe_blk x -> R.Case ("Choice_unsafe_blk",
-      map_expression_ending_with_block env x
-    )
-  | `Brk_exp (v1, v2, v3) -> R.Case ("Brk_exp",
-      let v1 = (* "break" *) token env v1 in
-      let v2 =
-        (match v2 with
-        | Some x -> R.Option (Some (
-            map_loop_label env x
-          ))
-        | None -> R.Option None)
-      in
-      let v3 =
-        (match v3 with
-        | Some x -> R.Option (Some (
-            map_expression env x
-          ))
-        | None -> R.Option None)
-      in
-      R.Tuple [v1; v2; v3]
-    )
-  | `Cont_exp (v1, v2) -> R.Case ("Cont_exp",
-      let v1 = (* "continue" *) token env v1 in
-      let v2 =
-        (match v2 with
-        | Some x -> R.Option (Some (
-            map_loop_label env x
-          ))
-        | None -> R.Option None)
-      in
-      R.Tuple [v1; v2]
-    )
-  | `Index_exp (v1, v2, v3, v4) -> R.Case ("Index_exp",
-      let v1 = map_expression env v1 in
-      let v2 = (* "[" *) token env v2 in
-      let v3 = map_expression env v3 in
-      let v4 = (* "]" *) token env v4 in
-      R.Tuple [v1; v2; v3; v4]
-    )
-  | `Meta tok -> R.Case ("Meta",
-      (* pattern \$[a-zA-Z_]\w* *) token env tok
-    )
-  | `Clos_exp (v1, v2, v3) -> R.Case ("Clos_exp",
-      let v1 =
-        (match v1 with
-        | Some tok -> R.Option (Some (
-            (* "move" *) token env tok
-          ))
-        | None -> R.Option None)
-      in
-      let v2 = map_closure_parameters env v2 in
-      let v3 =
-        (match v3 with
-        | `Opt_DASHGT_type_blk (v1, v2) -> R.Case ("Opt_DASHGT_type_blk",
-            let v1 =
-              (match v1 with
-              | Some (v1, v2) -> R.Option (Some (
-                  let v1 = (* "->" *) token env v1 in
-                  let v2 = map_type_ env v2 in
-                  R.Tuple [v1; v2]
-                ))
-              | None -> R.Option None)
-            in
-            let v2 = map_block env v2 in
-            R.Tuple [v1; v2]
-          )
-        | `Exp x -> R.Case ("Exp",
-            map_expression env x
-          )
-        )
-      in
-      R.Tuple [v1; v2; v3]
-    )
-  | `Paren_exp (v1, v2, v3) -> R.Case ("Paren_exp",
-      let v1 = (* "(" *) token env v1 in
-      let v2 =
-        (match v2 with
-        | `Exp x -> R.Case ("Exp",
-            map_expression env x
-          )
-        | `Semg_typed_meta x -> R.Case ("Semg_typed_meta",
-            map_semgrep_typed_metavar env x
-          )
-        )
-      in
-      let v3 = (* ")" *) token env v3 in
-      R.Tuple [v1; v2; v3]
-    )
-  | `Struct_exp (v1, v2) -> R.Case ("Struct_exp",
-      let v1 =
-        (match v1 with
-        | `Id tok -> R.Case ("Id",
-            (* identifier *) token env tok
-          )
-        | `Scoped_type_id_in_exp_posi x -> R.Case ("Scoped_type_id_in_exp_posi",
-            map_scoped_type_identifier_in_expression_position env x
-          )
-        | `Gene_type_with_turb x -> R.Case ("Gene_type_with_turb",
-            map_generic_type_with_turbofish env x
-          )
-        )
-      in
-      let v2 = map_field_initializer_list env v2 in
-      R.Tuple [v1; v2]
     )
   | `Ellips tok -> R.Case ("Ellips",
       (* "..." *) token env tok
@@ -1810,6 +1496,330 @@ and map_expression_ending_with_block (env : env) (x : CST.expression_ending_with
     )
   | `Const_blk x -> R.Case ("Const_blk",
       map_const_block env x
+    )
+  )
+
+and map_expression_except_range (env : env) (x : CST.expression_except_range) =
+  (match x with
+  | `Un_exp (v1, v2) -> R.Case ("Un_exp",
+      let v1 =
+        (match v1 with
+        | `DASH tok -> R.Case ("DASH",
+            (* "-" *) token env tok
+          )
+        | `STAR tok -> R.Case ("STAR",
+            (* "*" *) token env tok
+          )
+        | `BANG tok -> R.Case ("BANG",
+            (* "!" *) token env tok
+          )
+        )
+      in
+      let v2 = map_expression env v2 in
+      R.Tuple [v1; v2]
+    )
+  | `Ref_exp (v1, v2, v3) -> R.Case ("Ref_exp",
+      let v1 = (* "&" *) token env v1 in
+      let v2 =
+        (match v2 with
+        | Some tok -> R.Option (Some (
+            (* "mut" *) token env tok
+          ))
+        | None -> R.Option None)
+      in
+      let v3 = map_expression env v3 in
+      R.Tuple [v1; v2; v3]
+    )
+  | `Try_exp (v1, v2) -> R.Case ("Try_exp",
+      let v1 = map_expression env v1 in
+      let v2 = (* "?" *) token env v2 in
+      R.Tuple [v1; v2]
+    )
+  | `Bin_exp x -> R.Case ("Bin_exp",
+      map_binary_expression env x
+    )
+  | `Assign_exp (v1, v2, v3) -> R.Case ("Assign_exp",
+      let v1 = map_expression env v1 in
+      let v2 = (* "=" *) token env v2 in
+      let v3 = map_expression env v3 in
+      R.Tuple [v1; v2; v3]
+    )
+  | `Comp_assign_expr (v1, v2, v3) -> R.Case ("Comp_assign_expr",
+      let v1 = map_expression env v1 in
+      let v2 =
+        (match v2 with
+        | `PLUSEQ tok -> R.Case ("PLUSEQ",
+            (* "+=" *) token env tok
+          )
+        | `DASHEQ tok -> R.Case ("DASHEQ",
+            (* "-=" *) token env tok
+          )
+        | `STAREQ tok -> R.Case ("STAREQ",
+            (* "*=" *) token env tok
+          )
+        | `SLASHEQ tok -> R.Case ("SLASHEQ",
+            (* "/=" *) token env tok
+          )
+        | `PERCEQ tok -> R.Case ("PERCEQ",
+            (* "%=" *) token env tok
+          )
+        | `AMPEQ tok -> R.Case ("AMPEQ",
+            (* "&=" *) token env tok
+          )
+        | `BAREQ tok -> R.Case ("BAREQ",
+            (* "|=" *) token env tok
+          )
+        | `HATEQ tok -> R.Case ("HATEQ",
+            (* "^=" *) token env tok
+          )
+        | `LTLTEQ tok -> R.Case ("LTLTEQ",
+            (* "<<=" *) token env tok
+          )
+        | `GTGTEQ tok -> R.Case ("GTGTEQ",
+            (* ">>=" *) token env tok
+          )
+        )
+      in
+      let v3 = map_expression env v3 in
+      R.Tuple [v1; v2; v3]
+    )
+  | `Type_cast_exp (v1, v2, v3) -> R.Case ("Type_cast_exp",
+      let v1 = map_expression env v1 in
+      let v2 = (* "as" *) token env v2 in
+      let v3 = map_type_ env v3 in
+      R.Tuple [v1; v2; v3]
+    )
+  | `Call_exp (v1, v2) -> R.Case ("Call_exp",
+      let v1 = map_expression_except_range env v1 in
+      let v2 = map_arguments env v2 in
+      R.Tuple [v1; v2]
+    )
+  | `Ret_exp x -> R.Case ("Ret_exp",
+      map_return_expression env x
+    )
+  | `Yield_exp x -> R.Case ("Yield_exp",
+      map_yield_expression env x
+    )
+  | `Lit x -> R.Case ("Lit",
+      map_literal env x
+    )
+  | `Id tok -> R.Case ("Id",
+      (* identifier *) token env tok
+    )
+  | `Choice_u8 x -> R.Case ("Choice_u8",
+      map_anon_choice_u8_6dad923 env x
+    )
+  | `Choice_defa x -> R.Case ("Choice_defa",
+      map_reserved_identifier env x
+    )
+  | `Self tok -> R.Case ("Self",
+      (* "self" *) token env tok
+    )
+  | `Scoped_id x -> R.Case ("Scoped_id",
+      map_scoped_identifier env x
+    )
+  | `Gene_func (v1, v2, v3) -> R.Case ("Gene_func",
+      let v1 =
+        (match v1 with
+        | `Id tok -> R.Case ("Id",
+            (* identifier *) token env tok
+          )
+        | `Scoped_id x -> R.Case ("Scoped_id",
+            map_scoped_identifier env x
+          )
+        | `Field_exp x -> R.Case ("Field_exp",
+            map_field_expression env x
+          )
+        )
+      in
+      let v2 = (* "::" *) token env v2 in
+      let v3 = map_type_arguments env v3 in
+      R.Tuple [v1; v2; v3]
+    )
+  | `Await_exp (v1, v2, v3) -> R.Case ("Await_exp",
+      let v1 = map_expression env v1 in
+      let v2 = (* "." *) token env v2 in
+      let v3 = (* "await" *) token env v3 in
+      R.Tuple [v1; v2; v3]
+    )
+  | `Field_exp x -> R.Case ("Field_exp",
+      map_field_expression env x
+    )
+  | `Array_exp (v1, v2, v3, v4) -> R.Case ("Array_exp",
+      let v1 = (* "[" *) token env v1 in
+      let v2 = R.List (List.map (map_attribute_item env) v2) in
+      let v3 =
+        (match v3 with
+        | `Exp_SEMI_exp (v1, v2, v3) -> R.Case ("Exp_SEMI_exp",
+            let v1 = map_expression env v1 in
+            let v2 = (* ";" *) token env v2 in
+            let v3 = map_expression env v3 in
+            R.Tuple [v1; v2; v3]
+          )
+        | `Opt_exp_rep_COMMA_exp_opt_COMMA (v1, v2) -> R.Case ("Opt_exp_rep_COMMA_exp_opt_COMMA",
+            let v1 =
+              (match v1 with
+              | Some (v1, v2) -> R.Option (Some (
+                  let v1 = map_expression env v1 in
+                  let v2 =
+                    R.List (List.map (fun (v1, v2) ->
+                      let v1 = (* "," *) token env v1 in
+                      let v2 = map_expression env v2 in
+                      R.Tuple [v1; v2]
+                    ) v2)
+                  in
+                  R.Tuple [v1; v2]
+                ))
+              | None -> R.Option None)
+            in
+            let v2 =
+              (match v2 with
+              | Some tok -> R.Option (Some (
+                  (* "," *) token env tok
+                ))
+              | None -> R.Option None)
+            in
+            R.Tuple [v1; v2]
+          )
+        )
+      in
+      let v4 = (* "]" *) token env v4 in
+      R.Tuple [v1; v2; v3; v4]
+    )
+  | `Tuple_exp (v1, v2, v3, v4, v5, v6, v7) -> R.Case ("Tuple_exp",
+      let v1 = (* "(" *) token env v1 in
+      let v2 = R.List (List.map (map_attribute_item env) v2) in
+      let v3 = map_expression env v3 in
+      let v4 = (* "," *) token env v4 in
+      let v5 =
+        R.List (List.map (fun (v1, v2) ->
+          let v1 = map_expression env v1 in
+          let v2 = (* "," *) token env v2 in
+          R.Tuple [v1; v2]
+        ) v5)
+      in
+      let v6 =
+        (match v6 with
+        | Some x -> R.Option (Some (
+            map_expression env x
+          ))
+        | None -> R.Option None)
+      in
+      let v7 = (* ")" *) token env v7 in
+      R.Tuple [v1; v2; v3; v4; v5; v6; v7]
+    )
+  | `Macro_invo x -> R.Case ("Macro_invo",
+      map_macro_invocation env x
+    )
+  | `Unit_exp (v1, v2) -> R.Case ("Unit_exp",
+      let v1 = (* "(" *) token env v1 in
+      let v2 = (* ")" *) token env v2 in
+      R.Tuple [v1; v2]
+    )
+  | `Brk_exp (v1, v2, v3) -> R.Case ("Brk_exp",
+      let v1 = (* "break" *) token env v1 in
+      let v2 =
+        (match v2 with
+        | Some x -> R.Option (Some (
+            map_loop_label env x
+          ))
+        | None -> R.Option None)
+      in
+      let v3 =
+        (match v3 with
+        | Some x -> R.Option (Some (
+            map_expression env x
+          ))
+        | None -> R.Option None)
+      in
+      R.Tuple [v1; v2; v3]
+    )
+  | `Cont_exp (v1, v2) -> R.Case ("Cont_exp",
+      let v1 = (* "continue" *) token env v1 in
+      let v2 =
+        (match v2 with
+        | Some x -> R.Option (Some (
+            map_loop_label env x
+          ))
+        | None -> R.Option None)
+      in
+      R.Tuple [v1; v2]
+    )
+  | `Index_exp (v1, v2, v3, v4) -> R.Case ("Index_exp",
+      let v1 = map_expression env v1 in
+      let v2 = (* "[" *) token env v2 in
+      let v3 = map_expression env v3 in
+      let v4 = (* "]" *) token env v4 in
+      R.Tuple [v1; v2; v3; v4]
+    )
+  | `Meta tok -> R.Case ("Meta",
+      (* pattern \$[a-zA-Z_]\w* *) token env tok
+    )
+  | `Clos_exp (v1, v2, v3) -> R.Case ("Clos_exp",
+      let v1 =
+        (match v1 with
+        | Some tok -> R.Option (Some (
+            (* "move" *) token env tok
+          ))
+        | None -> R.Option None)
+      in
+      let v2 = map_closure_parameters env v2 in
+      let v3 =
+        (match v3 with
+        | `Opt_DASHGT_type_blk (v1, v2) -> R.Case ("Opt_DASHGT_type_blk",
+            let v1 =
+              (match v1 with
+              | Some (v1, v2) -> R.Option (Some (
+                  let v1 = (* "->" *) token env v1 in
+                  let v2 = map_type_ env v2 in
+                  R.Tuple [v1; v2]
+                ))
+              | None -> R.Option None)
+            in
+            let v2 = map_block env v2 in
+            R.Tuple [v1; v2]
+          )
+        | `Exp x -> R.Case ("Exp",
+            map_expression env x
+          )
+        )
+      in
+      R.Tuple [v1; v2; v3]
+    )
+  | `Paren_exp (v1, v2, v3) -> R.Case ("Paren_exp",
+      let v1 = (* "(" *) token env v1 in
+      let v2 =
+        (match v2 with
+        | `Exp x -> R.Case ("Exp",
+            map_expression env x
+          )
+        | `Semg_typed_meta x -> R.Case ("Semg_typed_meta",
+            map_semgrep_typed_metavar env x
+          )
+        )
+      in
+      let v3 = (* ")" *) token env v3 in
+      R.Tuple [v1; v2; v3]
+    )
+  | `Struct_exp (v1, v2) -> R.Case ("Struct_exp",
+      let v1 =
+        (match v1 with
+        | `Id tok -> R.Case ("Id",
+            (* identifier *) token env tok
+          )
+        | `Scoped_type_id_in_exp_posi x -> R.Case ("Scoped_type_id_in_exp_posi",
+            map_scoped_type_identifier_in_expression_position env x
+          )
+        | `Gene_type_with_turb x -> R.Case ("Gene_type_with_turb",
+            map_generic_type_with_turbofish env x
+          )
+        )
+      in
+      let v2 = map_field_initializer_list env v2 in
+      R.Tuple [v1; v2]
+    )
+  | `Choice_unsafe_blk x -> R.Case ("Choice_unsafe_blk",
+      map_expression_ending_with_block env x
     )
   )
 
@@ -3344,6 +3354,18 @@ and map_where_predicate (env : env) ((v1, v2) : CST.where_predicate) =
   in
   let v2 = map_trait_bounds env v2 in
   R.Tuple [v1; v2]
+
+and map_yield_expression (env : env) (x : CST.yield_expression) =
+  (match x with
+  | `Yield_exp (v1, v2) -> R.Case ("Yield_exp",
+      let v1 = (* "yield" *) token env v1 in
+      let v2 = map_expression env v2 in
+      R.Tuple [v1; v2]
+    )
+  | `Yield tok -> R.Case ("Yield",
+      (* "yield" *) token env tok
+    )
+  )
 
 let map_source_file (env : env) (x : CST.source_file) =
   (match x with

@@ -602,118 +602,8 @@ and enum_variant_list = (
 )
 
 and expression = [
-    `Un_exp of (
-        [
-            `DASH of Token.t (* "-" *)
-          | `STAR of Token.t (* "*" *)
-          | `BANG of Token.t (* "!" *)
-        ]
-      * expression
-    )
-  | `Ref_exp of (Token.t (* "&" *) * Token.t (* "mut" *) option * expression)
-  | `Try_exp of (expression * Token.t (* "?" *))
-  | `Bin_exp of binary_expression
-  | `Assign_exp of (expression * Token.t (* "=" *) * expression)
-  | `Comp_assign_expr of (
-        expression
-      * [
-            `PLUSEQ of Token.t (* "+=" *)
-          | `DASHEQ of Token.t (* "-=" *)
-          | `STAREQ of Token.t (* "*=" *)
-          | `SLASHEQ of Token.t (* "/=" *)
-          | `PERCEQ of Token.t (* "%=" *)
-          | `AMPEQ of Token.t (* "&=" *)
-          | `BAREQ of Token.t (* "|=" *)
-          | `HATEQ of Token.t (* "^=" *)
-          | `LTLTEQ of Token.t (* "<<=" *)
-          | `GTGTEQ of Token.t (* ">>=" *)
-        ]
-      * expression
-    )
-  | `Type_cast_exp of (expression * Token.t (* "as" *) * type_)
+    `Exp_except_range of expression_except_range
   | `Range_exp of range_expression
-  | `Call_exp of (expression * arguments)
-  | `Ret_exp of return_expression
-  | `Lit of literal
-  | `Id of identifier (*tok*)
-  | `Choice_u8 of anon_choice_u8_6dad923
-  | `Choice_defa of reserved_identifier
-  | `Self of Token.t (* "self" *)
-  | `Scoped_id of scoped_identifier
-  | `Gene_func of (
-        [
-            `Id of identifier (*tok*)
-          | `Scoped_id of scoped_identifier
-          | `Field_exp of field_expression
-        ]
-      * Token.t (* "::" *)
-      * type_arguments
-    )
-  | `Await_exp of (expression * Token.t (* "." *) * Token.t (* "await" *))
-  | `Field_exp of field_expression
-  | `Array_exp of (
-        Token.t (* "[" *)
-      * attribute_item list (* zero or more *)
-      * [
-            `Exp_SEMI_exp of (expression * Token.t (* ";" *) * expression)
-          | `Opt_exp_rep_COMMA_exp_opt_COMMA of (
-                (
-                    expression
-                  * (Token.t (* "," *) * expression) list (* zero or more *)
-                )
-                  option
-              * Token.t (* "," *) option
-            )
-        ]
-      * Token.t (* "]" *)
-    )
-  | `Tuple_exp of (
-        Token.t (* "(" *)
-      * attribute_item list (* zero or more *)
-      * expression
-      * Token.t (* "," *)
-      * (expression * Token.t (* "," *)) list (* zero or more *)
-      * expression option
-      * Token.t (* ")" *)
-    )
-  | `Macro_invo of macro_invocation
-  | `Unit_exp of (Token.t (* "(" *) * Token.t (* ")" *))
-  | `Choice_unsafe_blk of expression_ending_with_block
-  | `Brk_exp of (
-        Token.t (* "break" *)
-      * loop_label option
-      * expression option
-    )
-  | `Cont_exp of (Token.t (* "continue" *) * loop_label option)
-  | `Index_exp of (
-        expression * Token.t (* "[" *) * expression * Token.t (* "]" *)
-    )
-  | `Meta of metavariable (*tok*)
-  | `Clos_exp of (
-        Token.t (* "move" *) option
-      * closure_parameters
-      * [
-            `Opt_DASHGT_type_blk of (
-                (Token.t (* "->" *) * type_) option
-              * block
-            )
-          | `Exp of expression
-        ]
-    )
-  | `Paren_exp of (
-        Token.t (* "(" *)
-      * [ `Exp of expression | `Semg_typed_meta of semgrep_typed_metavar ]
-      * Token.t (* ")" *)
-    )
-  | `Struct_exp of (
-        [
-            `Id of identifier (*tok*)
-          | `Scoped_type_id_in_exp_posi of
-              scoped_type_identifier_in_expression_position
-          | `Gene_type_with_turb of generic_type_with_turbofish
-        ]
-      * field_initializer_list
-    )
   | `Ellips of Token.t (* "..." *)
   | `Deep_ellips of (
         Token.t (* "<..." *) * expression * Token.t (* "...>" *)
@@ -763,6 +653,121 @@ and expression_ending_with_block = [
       * block
     )
   | `Const_blk of const_block
+]
+
+and expression_except_range = [
+    `Un_exp of (
+        [
+            `DASH of Token.t (* "-" *)
+          | `STAR of Token.t (* "*" *)
+          | `BANG of Token.t (* "!" *)
+        ]
+      * expression
+    )
+  | `Ref_exp of (Token.t (* "&" *) * Token.t (* "mut" *) option * expression)
+  | `Try_exp of (expression * Token.t (* "?" *))
+  | `Bin_exp of binary_expression
+  | `Assign_exp of (expression * Token.t (* "=" *) * expression)
+  | `Comp_assign_expr of (
+        expression
+      * [
+            `PLUSEQ of Token.t (* "+=" *)
+          | `DASHEQ of Token.t (* "-=" *)
+          | `STAREQ of Token.t (* "*=" *)
+          | `SLASHEQ of Token.t (* "/=" *)
+          | `PERCEQ of Token.t (* "%=" *)
+          | `AMPEQ of Token.t (* "&=" *)
+          | `BAREQ of Token.t (* "|=" *)
+          | `HATEQ of Token.t (* "^=" *)
+          | `LTLTEQ of Token.t (* "<<=" *)
+          | `GTGTEQ of Token.t (* ">>=" *)
+        ]
+      * expression
+    )
+  | `Type_cast_exp of (expression * Token.t (* "as" *) * type_)
+  | `Call_exp of (expression_except_range * arguments)
+  | `Ret_exp of return_expression
+  | `Yield_exp of yield_expression
+  | `Lit of literal
+  | `Id of identifier (*tok*)
+  | `Choice_u8 of anon_choice_u8_6dad923
+  | `Choice_defa of reserved_identifier
+  | `Self of Token.t (* "self" *)
+  | `Scoped_id of scoped_identifier
+  | `Gene_func of (
+        [
+            `Id of identifier (*tok*)
+          | `Scoped_id of scoped_identifier
+          | `Field_exp of field_expression
+        ]
+      * Token.t (* "::" *)
+      * type_arguments
+    )
+  | `Await_exp of (expression * Token.t (* "." *) * Token.t (* "await" *))
+  | `Field_exp of field_expression
+  | `Array_exp of (
+        Token.t (* "[" *)
+      * attribute_item list (* zero or more *)
+      * [
+            `Exp_SEMI_exp of (expression * Token.t (* ";" *) * expression)
+          | `Opt_exp_rep_COMMA_exp_opt_COMMA of (
+                (
+                    expression
+                  * (Token.t (* "," *) * expression) list (* zero or more *)
+                )
+                  option
+              * Token.t (* "," *) option
+            )
+        ]
+      * Token.t (* "]" *)
+    )
+  | `Tuple_exp of (
+        Token.t (* "(" *)
+      * attribute_item list (* zero or more *)
+      * expression
+      * Token.t (* "," *)
+      * (expression * Token.t (* "," *)) list (* zero or more *)
+      * expression option
+      * Token.t (* ")" *)
+    )
+  | `Macro_invo of macro_invocation
+  | `Unit_exp of (Token.t (* "(" *) * Token.t (* ")" *))
+  | `Brk_exp of (
+        Token.t (* "break" *)
+      * loop_label option
+      * expression option
+    )
+  | `Cont_exp of (Token.t (* "continue" *) * loop_label option)
+  | `Index_exp of (
+        expression * Token.t (* "[" *) * expression * Token.t (* "]" *)
+    )
+  | `Meta of metavariable (*tok*)
+  | `Clos_exp of (
+        Token.t (* "move" *) option
+      * closure_parameters
+      * [
+            `Opt_DASHGT_type_blk of (
+                (Token.t (* "->" *) * type_) option
+              * block
+            )
+          | `Exp of expression
+        ]
+    )
+  | `Paren_exp of (
+        Token.t (* "(" *)
+      * [ `Exp of expression | `Semg_typed_meta of semgrep_typed_metavar ]
+      * Token.t (* ")" *)
+    )
+  | `Struct_exp of (
+        [
+            `Id of identifier (*tok*)
+          | `Scoped_type_id_in_exp_posi of
+              scoped_type_identifier_in_expression_position
+          | `Gene_type_with_turb of generic_type_with_turbofish
+        ]
+      * field_initializer_list
+    )
+  | `Choice_unsafe_blk of expression_ending_with_block
 ]
 
 and expression_statement = [
@@ -1367,6 +1372,11 @@ and where_predicate = (
   * trait_bounds
 )
 
+and yield_expression = [
+    `Yield_exp of (Token.t (* "yield" *) * expression)
+  | `Yield of Token.t (* "yield" *)
+]
+
 type source_file = [
     `Rep_stmt of statement list (* zero or more *)
   | `Semg_exp of (Token.t (* "__SEMGREP_EXPRESSION" *) * expression)
@@ -1501,7 +1511,7 @@ type break_expression (* inlined *) = (
   * expression option
 )
 
-type call_expression (* inlined *) = (expression * arguments)
+type call_expression (* inlined *) = (expression_except_range * arguments)
 
 type captured_pattern (* inlined *) = (
     identifier (*tok*) * Token.t (* "@" *) * pattern
