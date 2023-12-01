@@ -1,6 +1,6 @@
 File: semgrep-grammars/src/tree-sitter-rust/LICENSE
 Git repo name: tree-sitter-rust
-Latest commit in repo: b255b1751fbdae3a5d8a3b8c1a9ed065bd281c72
+Latest commit in repo: 9cede24ef89daa4f5cf6e07b7a90940e7c802666
 Last change in file:
   commit 79f3003ca601783a6cff3c03fce75523298d64fa
   gpg: Signature made Wed 29 Mar 2017 09:15:16 AM PDT
@@ -17,19 +17,19 @@ Last change in file:
 ---
 File: semgrep-grammars/src/tree-sitter-rust/grammar.js
 Git repo name: tree-sitter-rust
-Latest commit in repo: b255b1751fbdae3a5d8a3b8c1a9ed065bd281c72
+Latest commit in repo: 9cede24ef89daa4f5cf6e07b7a90940e7c802666
 Last change in file:
-  commit b255b1751fbdae3a5d8a3b8c1a9ed065bd281c72
-  Author: Max Brunsfeld <maxbrunsfeld@gmail.com>
-  Date:   Fri Feb 4 12:52:14 2022 -0800
+  commit ae4bf7423e2f82838876222d4bb60518bbb48195
+  Author: ninevra <ninevra@gmail.com>
+  Date:   Mon Mar 7 17:55:43 2022 -0800
   
-      Make expression_statement visible
+      Promote metavariable out of _non_special_token
       
-      Co-Authored-By: Nathan Sobo <nathan@zed.dev>
+      Allows deduplicating _common_token and _non_special_token
 ---
 File: semgrep-grammars/src/semgrep-rust/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: 5218c675f7c7b1016f265701aac3a5fa8f56f8a7
+Latest commit in repo: c24730b56576256186200cfb3b9a34aca5a5c24c
 Last change in file:
   commit c4e674d7b13cb66c6fb987e94585837e0a4227c0
   gpg: Signature made Tue 07 Nov 2023 03:28:33 PM PST
