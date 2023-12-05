@@ -1,6 +1,6 @@
 File: semgrep-grammars/src/tree-sitter-rust/LICENSE
 Git repo name: tree-sitter-rust
-Latest commit in repo: f452031f5814d9d85c9cf6754c659286a0b6698c
+Latest commit in repo: 79456e6080f50fc1ca7c21845794308fa5d35a51
 Last change in file:
   commit 79f3003ca601783a6cff3c03fce75523298d64fa
   gpg: Signature made Wed 29 Mar 2017 09:15:16 AM PDT
@@ -17,19 +17,20 @@ Last change in file:
 ---
 File: semgrep-grammars/src/tree-sitter-rust/grammar.js
 Git repo name: tree-sitter-rust
-Latest commit in repo: f452031f5814d9d85c9cf6754c659286a0b6698c
+Latest commit in repo: 79456e6080f50fc1ca7c21845794308fa5d35a51
 Last change in file:
-  commit f452031f5814d9d85c9cf6754c659286a0b6698c
+  commit 79456e6080f50fc1ca7c21845794308fa5d35a51
+  gpg: Signature made Sat 18 Nov 2023 09:05:20 PM PST
+  gpg:                using RSA key FCC13F47A6900D64239FF13BE67890ADC4227273
+  gpg: Can't check signature: No public key
   Author: Amaan Qureshi <amaanq12@gmail.com>
-  Date:   Fri Aug 18 15:04:19 2023 -0400
+  Date:   Sat Nov 18 23:57:51 2023 -0500
   
-      refactor: better handling of token tree characters
-      
-      Queries to capture these symbols now works
+      fix: don't parse attribute items as shebangs
 ---
 File: semgrep-grammars/src/semgrep-rust/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: a739f4bc6b3ad0e92902022e7a178cc71a4018eb
+Latest commit in repo: a644def5375df9548fac8f3b4b03dacfee205e43
 Last change in file:
   commit 1202fbca21ecf1ec21d96882a1655ae2bace5ea9
   gpg: Signature made Fri 01 Dec 2023 03:22:24 PM PST

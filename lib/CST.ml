@@ -10,9 +10,11 @@ open Tree_sitter_run
 
 type imm_tok_dquot = Token.t (* "\"" *)
 
-type shebang = Token.t (* pattern #!.* *)
+type shebang = Token.t (* pattern #![\s]*[^\[\s]+ *)
 
 type block_comment = Token.t
+
+type line_comment_explicit = unit (* blank *)
 
 type tok_prec_p1_lt = Token.t
 
@@ -73,8 +75,6 @@ type fragment_specifier = [
   | `Vis of Token.t (* "vis" *)
 ]
 
-type line_comment = Token.t
-
 type reserved_identifier = [
     `Defa of Token.t (* "default" *)
   | `Union of Token.t (* "union" *)
@@ -82,7 +82,7 @@ type reserved_identifier = [
 
 type block_comment_explicit = unit (* blank *)
 
-type pat_36c5a8e = Token.t (* pattern "b?\"" *)
+type pat_eeda0f5 = Token.t (* pattern "[bc]?\"" *)
 
 type raw_string_literal = Token.t
 
@@ -90,12 +90,12 @@ type char_literal = Token.t
 
 type metavariable = Token.t (* pattern \$[a-zA-Z_]\w* *)
 
-type line_comment_explicit = unit (* blank *)
+type line_comment = Token.t
 
 type float_literal = Token.t
 
 type string_literal = (
-    pat_36c5a8e
+    pat_eeda0f5
   * [
         `Esc_seq of escape_sequence (*tok*)
       | `Str_content of string_content (*tok*)
@@ -104,7 +104,7 @@ type string_literal = (
   * imm_tok_dquot (*tok*)
 )
 
-type loop_label = (Token.t (* "'" *) * identifier (*tok*))
+type label = (Token.t (* "'" *) * identifier (*tok*))
 
 type lifetime = (Token.t (* "'" *) * identifier (*tok*))
 
@@ -401,6 +401,11 @@ and anon_choice_param_2c23cdc = [
   | `Type of type_
 ]
 
+and anon_choice_pat_17a3e23 = [
+    `Pat of pattern
+  | `Clos_exp of closure_expression
+]
+
 and anon_choice_pat_4717dcc = [ `Pat of pattern | `Param of parameter ]
 
 and anon_choice_shor_field_init_9cb4441 = [
@@ -454,24 +459,26 @@ and anon_choice_type_id_f1f5a37 = [
   | `Scoped_id of scoped_identifier
 ]
 
+and anon_opt_rep_attr_item_exp_rep_COMMA_rep_attr_item_exp_3d9e0d4 =
+  (
+      attribute_item list (* zero or more *)
+    * expression
+    * anon_rep_COMMA_rep_attr_item_exp_f504d6c
+  )
+    option
+
 and anon_pat_rep_COMMA_pat_2a80f16 = (
     pattern
   * (Token.t (* "," *) * pattern) list (* zero or more *)
 )
 
+and anon_rep_COMMA_rep_attr_item_exp_f504d6c =
+  (Token.t (* "," *) * attribute_item list (* zero or more *) * expression)
+    list (* zero or more *)
+
 and arguments = (
     Token.t (* "(" *)
-  * (
-        attribute_item list (* zero or more *)
-      * expression
-      * (
-            Token.t (* "," *)
-          * attribute_item list (* zero or more *)
-          * expression
-        )
-          list (* zero or more *)
-    )
-      option
+  * anon_opt_rep_attr_item_exp_rep_COMMA_rep_attr_item_exp_3d9e0d4
   * Token.t (* "," *) option
   * Token.t (* ")" *)
 )
@@ -546,7 +553,8 @@ and binary_expression = [
 ]
 
 and block = (
-    Token.t (* "{" *)
+    (label * Token.t (* ":" *)) option
+  * Token.t (* "{" *)
   * statement list (* zero or more *)
   * expression option
   * Token.t (* "}" *)
@@ -562,6 +570,16 @@ and bracketed_type = (
     Token.t (* "<" *)
   * [ `Type of type_ | `Qual_type of qualified_type ]
   * Token.t (* ">" *)
+)
+
+and closure_expression = (
+    Token.t (* "static" *) option
+  * Token.t (* "move" *) option
+  * closure_parameters
+  * [
+        `Opt_DASHGT_type_blk of ((Token.t (* "->" *) * type_) option * block)
+      | `Choice_exp of [ `Exp of expression | `X__ of Token.t (* "_" *) ]
+    ]
 )
 
 and closure_parameters = (
@@ -691,22 +709,23 @@ and expression_ending_with_block = [
       * Token.t (* "move" *) option
       * block
     )
+  | `Try_blk of (Token.t (* "try" *) * block)
   | `Blk of block
   | `If_exp of if_expression
   | `Match_exp of (Token.t (* "match" *) * expression * match_block)
   | `While_exp of (
-        (loop_label * Token.t (* ":" *)) option
+        (label * Token.t (* ":" *)) option
       * Token.t (* "while" *)
       * condition
       * block
     )
   | `Loop_exp of (
-        (loop_label * Token.t (* ":" *)) option
+        (label * Token.t (* ":" *)) option
       * Token.t (* "loop" *)
       * block
     )
   | `For_exp of (
-        (loop_label * Token.t (* ":" *)) option
+        (label * Token.t (* ":" *)) option
       * Token.t (* "for" *)
       * pattern
       * Token.t (* "in" *)
@@ -771,12 +790,8 @@ and expression_except_range = [
       * attribute_item list (* zero or more *)
       * [
             `Exp_SEMI_exp of (expression * Token.t (* ";" *) * expression)
-          | `Opt_exp_rep_COMMA_exp_opt_COMMA of (
-                (
-                    expression
-                  * (Token.t (* "," *) * expression) list (* zero or more *)
-                )
-                  option
+          | `Opt_rep_attr_item_exp_rep_COMMA_rep_attr_item_exp_opt_COMMA of (
+                anon_opt_rep_attr_item_exp_rep_COMMA_rep_attr_item_exp_3d9e0d4
               * Token.t (* "," *) option
             )
         ]
@@ -793,27 +808,13 @@ and expression_except_range = [
     )
   | `Macro_invo of macro_invocation
   | `Unit_exp of (Token.t (* "(" *) * Token.t (* ")" *))
-  | `Brk_exp of (
-        Token.t (* "break" *)
-      * loop_label option
-      * expression option
-    )
-  | `Cont_exp of (Token.t (* "continue" *) * loop_label option)
+  | `Brk_exp of (Token.t (* "break" *) * label option * expression option)
+  | `Cont_exp of (Token.t (* "continue" *) * label option)
   | `Index_exp of (
         expression * Token.t (* "[" *) * expression * Token.t (* "]" *)
     )
   | `Meta of metavariable (*tok*)
-  | `Clos_exp of (
-        Token.t (* "move" *) option
-      * closure_parameters
-      * [
-            `Opt_DASHGT_type_blk of (
-                (Token.t (* "->" *) * type_) option
-              * block
-            )
-          | `Exp of expression
-        ]
-    )
+  | `Clos_exp of closure_expression
   | `Paren_exp of (
         Token.t (* "(" *)
       * [ `Exp of expression | `Semg_typed_meta of semgrep_typed_metavar ]
@@ -937,7 +938,14 @@ and function_type = (
   * (Token.t (* "->" *) * type_) option
 )
 
-and generic_type = (anon_choice_type_id_2c46bcf * type_arguments)
+and generic_type = (
+    [
+        `Id of identifier (*tok*)
+      | `Choice_defa of reserved_identifier
+      | `Scoped_type_id of scoped_type_identifier
+    ]
+  * type_arguments
+)
 
 and generic_type_with_turbofish = (
     anon_choice_type_id_f1f5a37 * Token.t (* "::" *) * type_arguments
@@ -959,7 +967,8 @@ and impl_item = (
   * Token.t (* "impl" *)
   * type_parameters option
   * (
-        [
+        Token.t (* "!" *) option
+      * [
             `Id of identifier (*tok*)
           | `Scoped_type_id of scoped_type_identifier
           | `Gene_type of generic_type
@@ -1037,7 +1046,10 @@ and match_block = (
   * Token.t (* "}" *)
 )
 
-and match_pattern = (pattern * (Token.t (* "if" *) * condition) option)
+and match_pattern = (
+    anon_choice_pat_17a3e23
+  * (Token.t (* "if" *) * condition) option
+)
 
 and mod_item = (
     visibility_modifier option
@@ -1107,7 +1119,12 @@ and pattern = [
   | `Scoped_id of scoped_identifier
   | `Tuple_pat of (
         Token.t (* "(" *)
-      * anon_pat_rep_COMMA_pat_2a80f16 option
+      * (
+            anon_choice_pat_17a3e23
+          * (Token.t (* "," *) * anon_choice_pat_17a3e23)
+              list (* zero or more *)
+        )
+          option
       * Token.t (* "," *) option
       * Token.t (* ")" *)
     )
@@ -1329,6 +1346,7 @@ and type_item = (
   * type_parameters option
   * Token.t (* "=" *)
   * type_
+  * where_clause option
   * Token.t (* ";" *)
 )
 
@@ -1462,16 +1480,16 @@ type field_identifier (* inlined *) = identifier (*tok*)
 
 type type_identifier (* inlined *) = identifier (*tok*)
 
-type dummy_alias1 (* inlined *) = line_comment (*tok*)
+type comment (* inlined *) = [
+    `Line_comm_expl of line_comment_explicit (*tok*)
+  | `Blk_comm_expl of block_comment_explicit (*tok*)
+]
 
 type token_binding_pattern (* inlined *) = (
     metavariable (*tok*) * Token.t (* ":" *) * fragment_specifier
 )
 
-type comment (* inlined *) = [
-    `Line_comm_expl of line_comment_explicit (*tok*)
-  | `Blk_comm_expl of block_comment_explicit (*tok*)
-]
+type dummy_alias1 (* inlined *) = line_comment (*tok*)
 
 type negative_literal (* inlined *) = (
     Token.t (* "-" *)
@@ -1483,7 +1501,7 @@ type negative_literal (* inlined *) = (
 
 type continue_expression (* inlined *) = (
     Token.t (* "continue" *)
-  * loop_label option
+  * label option
 )
 
 type self_parameter (* inlined *) = (
@@ -1522,12 +1540,8 @@ type array_expression (* inlined *) = (
   * attribute_item list (* zero or more *)
   * [
         `Exp_SEMI_exp of (expression * Token.t (* ";" *) * expression)
-      | `Opt_exp_rep_COMMA_exp_opt_COMMA of (
-            (
-                expression
-              * (Token.t (* "," *) * expression) list (* zero or more *)
-            )
-              option
+      | `Opt_rep_attr_item_exp_rep_COMMA_rep_attr_item_exp_opt_COMMA of (
+            anon_opt_rep_attr_item_exp_rep_COMMA_rep_attr_item_exp_3d9e0d4
           * Token.t (* "," *) option
         )
     ]
@@ -1550,7 +1564,7 @@ type await_expression (* inlined *) = (
 
 type break_expression (* inlined *) = (
     Token.t (* "break" *)
-  * loop_label option
+  * label option
   * expression option
 )
 
@@ -1558,15 +1572,6 @@ type call_expression (* inlined *) = (expression_except_range * arguments)
 
 type captured_pattern (* inlined *) = (
     identifier (*tok*) * Token.t (* "@" *) * pattern
-)
-
-type closure_expression (* inlined *) = (
-    Token.t (* "move" *) option
-  * closure_parameters
-  * [
-        `Opt_DASHGT_type_blk of ((Token.t (* "->" *) * type_) option * block)
-      | `Exp of expression
-    ]
 )
 
 type compound_assignment_expr (* inlined *) = (
@@ -1615,7 +1620,7 @@ type field_pattern (* inlined *) = (
 )
 
 type for_expression (* inlined *) = (
-    (loop_label * Token.t (* ":" *)) option
+    (label * Token.t (* ":" *)) option
   * Token.t (* "for" *)
   * pattern
   * Token.t (* "in" *)
@@ -1638,7 +1643,7 @@ type index_expression (* inlined *) = (
 )
 
 type loop_expression (* inlined *) = (
-    (loop_label * Token.t (* ":" *)) option
+    (label * Token.t (* ":" *)) option
   * Token.t (* "loop" *)
   * block
 )
@@ -1733,6 +1738,8 @@ type struct_pattern (* inlined *) = (
   * Token.t (* "}" *)
 )
 
+type try_block (* inlined *) = (Token.t (* "try" *) * block)
+
 type try_expression (* inlined *) = (expression * Token.t (* "?" *))
 
 type tuple_expression (* inlined *) = (
@@ -1747,7 +1754,11 @@ type tuple_expression (* inlined *) = (
 
 type tuple_pattern (* inlined *) = (
     Token.t (* "(" *)
-  * anon_pat_rep_COMMA_pat_2a80f16 option
+  * (
+        anon_choice_pat_17a3e23
+      * (Token.t (* "," *) * anon_choice_pat_17a3e23) list (* zero or more *)
+    )
+      option
   * Token.t (* "," *) option
   * Token.t (* ")" *)
 )
@@ -1792,7 +1803,7 @@ type use_wildcard (* inlined *) = (
 )
 
 type while_expression (* inlined *) = (
-    (loop_label * Token.t (* ":" *)) option
+    (label * Token.t (* ":" *)) option
   * Token.t (* "while" *)
   * condition
   * block
