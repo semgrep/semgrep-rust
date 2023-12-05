@@ -1,6 +1,6 @@
 File: semgrep-grammars/src/tree-sitter-rust/LICENSE
 Git repo name: tree-sitter-rust
-Latest commit in repo: 9cede24ef89daa4f5cf6e07b7a90940e7c802666
+Latest commit in repo: f452031f5814d9d85c9cf6754c659286a0b6698c
 Last change in file:
   commit 79f3003ca601783a6cff3c03fce75523298d64fa
   gpg: Signature made Wed 29 Mar 2017 09:15:16 AM PDT
@@ -17,33 +17,39 @@ Last change in file:
 ---
 File: semgrep-grammars/src/tree-sitter-rust/grammar.js
 Git repo name: tree-sitter-rust
-Latest commit in repo: 9cede24ef89daa4f5cf6e07b7a90940e7c802666
+Latest commit in repo: f452031f5814d9d85c9cf6754c659286a0b6698c
 Last change in file:
-  commit ae4bf7423e2f82838876222d4bb60518bbb48195
-  Author: ninevra <ninevra@gmail.com>
-  Date:   Mon Mar 7 17:55:43 2022 -0800
+  commit f452031f5814d9d85c9cf6754c659286a0b6698c
+  Author: Amaan Qureshi <amaanq12@gmail.com>
+  Date:   Fri Aug 18 15:04:19 2023 -0400
   
-      Promote metavariable out of _non_special_token
+      refactor: better handling of token tree characters
       
-      Allows deduplicating _common_token and _non_special_token
+      Queries to capture these symbols now works
 ---
 File: semgrep-grammars/src/semgrep-rust/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: c24730b56576256186200cfb3b9a34aca5a5c24c
+Latest commit in repo: a739f4bc6b3ad0e92902022e7a178cc71a4018eb
 Last change in file:
-  commit c4e674d7b13cb66c6fb987e94585837e0a4227c0
-  gpg: Signature made Tue 07 Nov 2023 03:28:33 PM PST
+  commit 1202fbca21ecf1ec21d96882a1655ae2bace5ea9
+  gpg: Signature made Fri 01 Dec 2023 03:22:24 PM PST
   gpg:                using RSA key C1930C5F9C9E0472DCF9ECC97D71116F505E5145
   gpg: Good signature from "Nathaniel Mote <nat@semgrep.com>" [ultimate]
   gpg:                 aka "Nathaniel Mote <nat@r2c.dev>" [ultimate]
   gpg:                 aka "Nathaniel Mote <nat@natmote.net>" [ultimate]
   Author: Nat Mote <nat@semgrep.com>
-  Date:   Tue Nov 7 15:14:55 2023 -0800
+  Date:   Fri Dec 1 15:13:13 2023 -0800
   
-      chore: Update tree-sitter-rust (1/n)
+      chore: Update tree-sitter-rust (3/n)
       
-      We are way behind on tree-sitter-rust. When I tried to do a big jump I
-      ran into a bunch of problems, so I'm going to do it bit by bit.
+      Among other things, this pulls in some significant changes how macros
+      are handled. There were two major changes, months apart, and I wanted to
+      pull them both in at once, so this is a fairly major jump.
       
-      Test plan: Automated tests
+      I also ran in to a weird issue parsing the Semgrep ellipsis that was
+      sorted out in a later commit, so I pulled in some more commits after the
+      macro changes as well.
+      
+      Test plan: Automated tests, plus pulled this in to Semgrep and verified
+      that tests pass there.
 ---

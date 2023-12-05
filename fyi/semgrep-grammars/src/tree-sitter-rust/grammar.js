@@ -2,7 +2,8 @@ const PREC = {
   range: 15,
   call: 14,
   field: 13,
-  unary: 11,
+  unary: 12,
+  cast: 11,
   multiplicative: 10,
   additive: 9,
   shift: 8,
@@ -32,6 +33,15 @@ const numeric_types = [
   'f32',
   'f64'
 ]
+
+const TOKEN_TREE_NON_SPECIAL_TOKENS = [
+  '/', '_', '\\', '-',
+  '=', '->', ',', ';',
+  ':', '::', '!', '?',
+  '.', '@', '*', '&',
+  '#', '%', '^', '+',
+  '<', '>', '|', '~',
+];
 
 const primitive_types = numeric_types.concat(['bool', 'str', 'char'])
 
@@ -81,7 +91,10 @@ module.exports = grammar({
   word: $ => $.identifier,
 
   rules: {
-    source_file: $ => repeat($._statement),
+    source_file: $ => seq(
+      optional($.shebang),
+      repeat($._statement),
+    ),
 
     _statement: $ => choice(
       $.expression_statement,
@@ -198,7 +211,7 @@ module.exports = grammar({
     _non_special_token: $ => choice(
       $._literal, $.identifier, $.mutable_specifier, $.self, $.super, $.crate,
       alias(choice(...primitive_types), $.primitive_type),
-      /[/_\-=->,;:::!=?.@*&#%^+<>|~]+/,
+      prec.right(repeat1(choice(...TOKEN_TREE_NON_SPECIAL_TOKENS))),
       '\'',
       'as', 'async', 'await', 'break', 'const', 'continue', 'default', 'enum', 'fn', 'for', 'if', 'impl',
       'let', 'loop', 'match', 'mod', 'pub', 'return', 'static', 'struct', 'trait', 'type',
@@ -210,7 +223,7 @@ module.exports = grammar({
     attribute_item: $ => seq(
       '#',
       '[',
-      $.meta_item,
+      $.attribute,
       ']'
     ),
 
@@ -218,26 +231,16 @@ module.exports = grammar({
       '#',
       '!',
       '[',
-      $.meta_item,
+      $.attribute,
       ']'
     ),
 
-    meta_item: $ => seq(
+    attribute: $ => seq(
       $._path,
       optional(choice(
-        seq('=', field('value', $._literal)),
-        field('arguments', $.meta_arguments)
+        seq('=', field('value', $._expression)),
+        field('arguments', alias($.delim_token_tree, $.token_tree))
       ))
-    ),
-
-    meta_arguments: $ => seq(
-      '(',
-      sepBy(',', choice(
-        $.meta_item,
-        $._literal
-      )),
-      optional(','),
-      ')'
     ),
 
     mod_item: $ => seq(
@@ -449,6 +452,7 @@ module.exports = grammar({
         $.reference_type,
         $.pointer_type,
         $.tuple_type,
+        $.array_type,
         $.higher_ranked_trait_bound,
         alias(choice(...primitive_types), $.primitive_type)
       )),
@@ -559,6 +563,10 @@ module.exports = grammar({
         '=',
         field('value', $._expression)
       )),
+      optional(seq(
+        'else',
+        field('alternative', $.block)
+      )),
       ';'
     ),
 
@@ -632,7 +640,6 @@ module.exports = grammar({
       field('pattern', choice(
         $._pattern,
         $.self,
-        $._reserved_identifier,
       )),
       ':',
       field('type', $._type)
@@ -814,6 +821,7 @@ module.exports = grammar({
 
     abstract_type: $ => seq(
       'impl',
+      optional(seq('for', $.type_parameters)),
       field('trait', choice(
         $._type_identifier,
         $.scoped_type_identifier,
@@ -880,10 +888,8 @@ module.exports = grammar({
       $.async_block,
       $.block,
       $.if_expression,
-      $.if_let_expression,
       $.match_expression,
       $.while_expression,
-      $.while_let_expression,
       $.loop_expression,
       $.for_expression,
       $.const_block
@@ -923,7 +929,7 @@ module.exports = grammar({
         alias($.generic_type_with_turbofish, $.generic_type)
       ))),
       '::',
-      field('name', $.identifier)
+      field('name', choice($.identifier, $.super)),
     ),
 
     scoped_type_identifier_in_expression_position: $ => prec(-2, seq(
@@ -1001,11 +1007,11 @@ module.exports = grammar({
       field('right', $._expression)
     )),
 
-    type_cast_expression: $ => seq(
+    type_cast_expression: $ => prec.left(PREC.cast, seq(
       field('value', $._expression),
       'as',
       field('type', $._type)
-    ),
+    )),
 
     return_expression: $ => choice(
       prec.left(seq('return', $._expression)),
@@ -1100,29 +1106,39 @@ module.exports = grammar({
       $._expression
     ),
 
-    if_expression: $ => seq(
+    if_expression: $ => prec.right(seq(
       'if',
-      field('condition', $._expression),
+      field('condition', $._condition),
       field('consequence', $.block),
       optional(field("alternative", $.else_clause))
-    ),
+    )),
 
-    if_let_expression: $ => seq(
-      'if',
+    let_condition: $ => seq(
       'let',
       field('pattern', $._pattern),
       '=',
-      field('value', $._expression),
-      field('consequence', $.block),
-      optional(field('alternative', $.else_clause))
+      field('value', prec.left(PREC.and, $._expression))
+    ),
+
+    _let_chain: $ => prec.left(PREC.and, choice(
+      seq($._let_chain, '&&', $.let_condition),
+      seq($._let_chain, '&&', $._expression),
+      seq($.let_condition, '&&', $._expression),
+      seq($.let_condition, '&&', $.let_condition),
+      seq($._expression, '&&', $.let_condition),
+    )),
+
+    _condition: $ => choice(
+      $._expression,
+      $.let_condition,
+      alias($._let_chain, $.let_chain),
     ),
 
     else_clause: $ => seq(
       'else',
       choice(
         $.block,
-        $.if_expression,
-        $.if_let_expression
+        $.if_expression
       )
     ),
 
@@ -1143,10 +1159,7 @@ module.exports = grammar({
 
     match_arm: $ => seq(
       repeat($.attribute_item),
-      field('pattern', choice(
-        $.macro_invocation,
-        $.match_pattern
-      )),
+      field('pattern', $.match_pattern),
       '=>',
       choice(
         seq(field('value', $._expression), ','),
@@ -1164,23 +1177,13 @@ module.exports = grammar({
 
     match_pattern: $ => seq(
       $._pattern,
-      optional(seq('if', field('condition', $._expression)))
+      optional(seq('if', field('condition', $._condition)))
     ),
 
     while_expression: $ => seq(
       optional(seq($.loop_label, ':')),
       'while',
-      field('condition', $._expression),
-      field('body', $.block)
-    ),
-
-    while_let_expression: $ => seq(
-      optional(seq($.loop_label, ':')),
-      'while',
-      'let',
-      field('pattern', $._pattern),
-      '=',
-      field('value', $._expression),
+      field('condition', $._condition),
       field('body', $.block)
     ),
 
@@ -1276,6 +1279,7 @@ module.exports = grammar({
       $.tuple_pattern,
       $.tuple_struct_pattern,
       $.struct_pattern,
+      $._reserved_identifier,
       $.ref_pattern,
       $.slice_pattern,
       $.captured_pattern,
@@ -1285,6 +1289,7 @@ module.exports = grammar({
       $.range_pattern,
       $.or_pattern,
       $.const_block,
+      $.macro_invocation,
       '_'
     ),
 
@@ -1469,6 +1474,8 @@ module.exports = grammar({
     ),
 
     identifier: $ => /(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*/,
+
+    shebang: $ => /#!.*/,
 
     _reserved_identifier: $ => alias(choice(
       'default',
