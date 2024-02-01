@@ -3,9 +3,6 @@ Git repo name: tree-sitter-rust
 Latest commit in repo: 79456e6080f50fc1ca7c21845794308fa5d35a51
 Last change in file:
   commit 79f3003ca601783a6cff3c03fce75523298d64fa
-  gpg: Signature made Wed 29 Mar 2017 09:15:16 AM PDT
-  gpg:                using RSA key 9FADA88FC0824C9E
-  gpg: Can't check signature: No public key
   Author: Maxim Sokolov <maxim0xff@gmail.com>
   Date:   Wed Mar 29 14:32:36 2017 +0300
   
@@ -20,9 +17,6 @@ Git repo name: tree-sitter-rust
 Latest commit in repo: 79456e6080f50fc1ca7c21845794308fa5d35a51
 Last change in file:
   commit 79456e6080f50fc1ca7c21845794308fa5d35a51
-  gpg: Signature made Sat 18 Nov 2023 09:05:20 PM PST
-  gpg:                using RSA key FCC13F47A6900D64239FF13BE67890ADC4227273
-  gpg: Can't check signature: No public key
   Author: Amaan Qureshi <amaanq12@gmail.com>
   Date:   Sat Nov 18 23:57:51 2023 -0500
   
@@ -30,14 +24,9 @@ Last change in file:
 ---
 File: semgrep-grammars/src/semgrep-rust/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: a644def5375df9548fac8f3b4b03dacfee205e43
+Latest commit in repo: c9a8bca714137c43f8aede5ed2215193d53defc9
 Last change in file:
   commit 1202fbca21ecf1ec21d96882a1655ae2bace5ea9
-  gpg: Signature made Fri 01 Dec 2023 03:22:24 PM PST
-  gpg:                using RSA key C1930C5F9C9E0472DCF9ECC97D71116F505E5145
-  gpg: Good signature from "Nathaniel Mote <nat@semgrep.com>" [ultimate]
-  gpg:                 aka "Nathaniel Mote <nat@r2c.dev>" [ultimate]
-  gpg:                 aka "Nathaniel Mote <nat@natmote.net>" [ultimate]
   Author: Nat Mote <nat@semgrep.com>
   Date:   Fri Dec 1 15:13:13 2023 -0800
   
