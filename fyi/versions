@@ -24,7 +24,7 @@ Last change in file:
 ---
 File: semgrep-grammars/src/semgrep-rust/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: c9a8bca714137c43f8aede5ed2215193d53defc9
+Latest commit in repo: 35576b0e69d86858b69714091f07a6944855baba
 Last change in file:
   commit 1202fbca21ecf1ec21d96882a1655ae2bace5ea9
   Author: Nat Mote <nat@semgrep.com>

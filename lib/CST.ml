@@ -1817,3 +1817,10 @@ type semgrep_statement (* inlined *) = (
 type semgrep_expression (* inlined *) = (
     Token.t (* "__SEMGREP_EXPRESSION" *) * expression
 )
+
+type extra = 
+    Line_comment of Loc.t * line_comment
+  | Block_comment of Loc.t * block_comment
+
+
+type extras = extra list
