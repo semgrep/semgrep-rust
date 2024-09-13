@@ -3595,8 +3595,8 @@ let dump_tree root =
 
 let map_extra (env : env) (x : CST.extra) =
   match x with
-  | Line_comment (_loc, x) -> ("line_comment", "line_comment", map_line_comment env x)
-  | Block_comment (_loc, x) -> ("block_comment", "block_comment", map_block_comment env x)
+  | `Line_comment (_loc, x) -> ("line_comment", "line_comment", map_line_comment env x)
+  | `Block_comment (_loc, x) -> ("block_comment", "block_comment", map_block_comment env x)
 
 let dump_extras (extras : CST.extras) =
   List.iter (fun extra ->
