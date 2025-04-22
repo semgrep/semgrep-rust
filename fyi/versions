@@ -2,15 +2,11 @@ File: semgrep-grammars/src/tree-sitter-rust/LICENSE
 Git repo name: tree-sitter-rust
 Latest commit in repo: 79456e6080f50fc1ca7c21845794308fa5d35a51
 Last change in file:
-  commit 79f3003ca601783a6cff3c03fce75523298d64fa
-  Author: Maxim Sokolov <maxim0xff@gmail.com>
-  Date:   Wed Mar 29 14:32:36 2017 +0300
+  commit 79456e6080f50fc1ca7c21845794308fa5d35a51
+  Author: Amaan Qureshi <amaanq12@gmail.com>
+  Date:   Sat Nov 18 23:57:51 2023 -0500
   
-      Init
-      
-      Based on
-      https://github.com/tree-sitter/tree-sitter-javascript
-      https://github.com/tree-sitter/tree-sitter-go
+      fix: don't parse attribute items as shebangs
 ---
 File: semgrep-grammars/src/tree-sitter-rust/grammar.js
 Git repo name: tree-sitter-rust
@@ -24,7 +20,7 @@ Last change in file:
 ---
 File: semgrep-grammars/src/semgrep-rust/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: 62c59803ce966ac00210b5ed8aa163a926f7eaad
+Latest commit in repo: 091f5438fc0c15b80217f00e5b94ec0e55517383
 Last change in file:
   commit 1202fbca21ecf1ec21d96882a1655ae2bace5ea9
   Author: Nat Mote <nat@semgrep.com>
