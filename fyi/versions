@@ -1,41 +1,38 @@
 File: semgrep-grammars/src/tree-sitter-rust/LICENSE
 Git repo name: tree-sitter-rust
-Latest commit in repo: 79456e6080f50fc1ca7c21845794308fa5d35a51
+Latest commit in repo: 3691201b01cacb2f96ffca4c632c4e938bfacd88
 Last change in file:
-  commit 79456e6080f50fc1ca7c21845794308fa5d35a51
-  Author: Amaan Qureshi <amaanq12@gmail.com>
-  Date:   Sat Nov 18 23:57:51 2023 -0500
+  commit 79f3003ca601783a6cff3c03fce75523298d64fa
+  Author: Maxim Sokolov <maxim0xff@gmail.com>
+  Date:   Wed Mar 29 14:32:36 2017 +0300
   
-      fix: don't parse attribute items as shebangs
+      Init
+      
+      Based on
+      https://github.com/tree-sitter/tree-sitter-javascript
+      https://github.com/tree-sitter/tree-sitter-go
 ---
 File: semgrep-grammars/src/tree-sitter-rust/grammar.js
 Git repo name: tree-sitter-rust
-Latest commit in repo: 79456e6080f50fc1ca7c21845794308fa5d35a51
+Latest commit in repo: 3691201b01cacb2f96ffca4c632c4e938bfacd88
 Last change in file:
-  commit 79456e6080f50fc1ca7c21845794308fa5d35a51
-  Author: Amaan Qureshi <amaanq12@gmail.com>
-  Date:   Sat Nov 18 23:57:51 2023 -0500
+  commit 377ca9607970a5961201158a7bf620fb39038e14
+  Author: may <63159454+m4rch3n1ng@users.noreply.github.com>
+  Date:   Tue Apr 1 22:39:30 2025 +0200
   
-      fix: don't parse attribute items as shebangs
+      add expr_2021 and pat_param to fragment_specifier (#266)
+      
+      * add expr_2021 and pat_param to fragment_specifier
+      
+      * chore: tree-sitter generate
 ---
 File: semgrep-grammars/src/semgrep-rust/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: 091f5438fc0c15b80217f00e5b94ec0e55517383
+Latest commit in repo: e4706c226f0fab25af5da48fd138ca9aad3ec295
 Last change in file:
-  commit 1202fbca21ecf1ec21d96882a1655ae2bace5ea9
-  Author: Nat Mote <nat@semgrep.com>
-  Date:   Fri Dec 1 15:13:13 2023 -0800
+  commit e4706c226f0fab25af5da48fd138ca9aad3ec295
+  Author: brandonspark <wu.brandonj@gmail.com>
+  Date:   Wed May 7 15:07:58 2025 -0700
   
-      chore: Update tree-sitter-rust (3/n)
-      
-      Among other things, this pulls in some significant changes how macros
-      are handled. There were two major changes, months apart, and I wanted to
-      pull them both in at once, so this is a fairly major jump.
-      
-      I also ran in to a weird issue parsing the Semgrep ellipsis that was
-      sorted out in a later commit, so I pulled in some more commits after the
-      macro changes as well.
-      
-      Test plan: Automated tests, plus pulled this in to Semgrep and verified
-      that tests pass there.
+      fix rust
 ---
