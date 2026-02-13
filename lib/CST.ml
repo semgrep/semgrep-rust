@@ -560,12 +560,7 @@ and anon_choice_shor_field_init_9cb4441 = [
         attribute_item list (* zero or more *)
       * identifier (*tok*)
     )
-  | `Field_init of (
-        attribute_item list (* zero or more *)
-      * anon_choice_field_id_f2cdd14
-      * Token.t (* ":" *)
-      * expression
-    )
+  | `Field_init of field_initializer
   | `Base_field_init of base_field_initializer
 ]
 
@@ -1014,6 +1009,16 @@ and field_declaration_list = (
 and field_expression = (
     expression * Token.t (* "." *) * anon_choice_field_id_f2cdd14
 )
+
+and field_initializer = [
+    `Rep_attr_item_choice_id_COLON_exp of (
+        attribute_item list (* zero or more *)
+      * anon_choice_field_id_f2cdd14
+      * Token.t (* ":" *)
+      * expression
+    )
+  | `Ellips of Token.t (* "..." *)
+]
 
 and field_initializer_list = (
     Token.t (* "{" *)
@@ -1557,6 +1562,7 @@ and use_clause = [
         (path option * Token.t (* "::" *)) option
       * Token.t (* "*" *)
     )
+  | `Ellips of Token.t (* "..." *)
 ]
 
 and use_declaration = (
@@ -1826,13 +1832,6 @@ type dynamic_type (* inlined *) = (
       | `Func_type of function_type
       | `Tuple_type of tuple_type
     ]
-)
-
-type field_initializer (* inlined *) = (
-    attribute_item list (* zero or more *)
-  * anon_choice_field_id_f2cdd14
-  * Token.t (* ":" *)
-  * expression
 )
 
 type field_pattern (* inlined *) = (

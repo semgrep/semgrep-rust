@@ -1254,12 +1254,8 @@ and map_anon_choice_shor_field_init_9cb4441 (env : env) (x : CST.anon_choice_sho
       let v2 = (* identifier *) token env v2 in
       R.Tuple [v1; v2]
     )
-  | `Field_init (v1, v2, v3, v4) -> R.Case ("Field_init",
-      let v1 = R.List (List.map (map_attribute_item env) v1) in
-      let v2 = map_anon_choice_field_id_f2cdd14 env v2 in
-      let v3 = (* ":" *) token env v3 in
-      let v4 = map_expression env v4 in
-      R.Tuple [v1; v2; v3; v4]
+  | `Field_init x -> R.Case ("Field_init",
+      map_field_initializer env x
     )
   | `Base_field_init x -> R.Case ("Base_field_init",
       map_base_field_initializer env x
@@ -2398,6 +2394,20 @@ and map_field_expression (env : env) ((v1, v2, v3) : CST.field_expression) =
   let v2 = (* "." *) token env v2 in
   let v3 = map_anon_choice_field_id_f2cdd14 env v3 in
   R.Tuple [v1; v2; v3]
+
+and map_field_initializer (env : env) (x : CST.field_initializer) =
+  (match x with
+  | `Rep_attr_item_choice_id_COLON_exp (v1, v2, v3, v4) -> R.Case ("Rep_attr_item_choice_id_COLON_exp",
+      let v1 = R.List (List.map (map_attribute_item env) v1) in
+      let v2 = map_anon_choice_field_id_f2cdd14 env v2 in
+      let v3 = (* ":" *) token env v3 in
+      let v4 = map_expression env v4 in
+      R.Tuple [v1; v2; v3; v4]
+    )
+  | `Ellips tok -> R.Case ("Ellips",
+      (* "..." *) token env tok
+    )
+  )
 
 and map_field_initializer_list (env : env) ((v1, v2, v3, v4) : CST.field_initializer_list) =
   let v1 = (* "{" *) token env v1 in
@@ -3835,6 +3845,9 @@ and map_use_clause (env : env) (x : CST.use_clause) =
       in
       let v2 = (* "*" *) token env v2 in
       R.Tuple [v1; v2]
+    )
+  | `Ellips tok -> R.Case ("Ellips",
+      (* "..." *) token env tok
     )
   )
 
