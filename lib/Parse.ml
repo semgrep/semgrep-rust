@@ -1968,20 +1968,17 @@ let children_regexps : (string * Run.exp option) list = [
   );
   "field_initializer",
   Some (
-    Alt [|
-      Seq [
-        Repeat (
-          Token (Name "attribute_item");
-        );
-        Alt [|
-          Token (Name "identifier");
-          Token (Name "integer_literal");
-        |];
-        Token (Literal ":");
-        Token (Name "expression");
-      ];
-      Token (Name "ellipsis");
-    |];
+    Seq [
+      Repeat (
+        Token (Name "attribute_item");
+      );
+      Alt [|
+        Token (Name "identifier");
+        Token (Name "integer_literal");
+      |];
+      Token (Literal ":");
+      Token (Name "expression");
+    ];
   );
   "field_initializer_list",
   Some (
@@ -3661,7 +3658,6 @@ let children_regexps : (string * Run.exp option) list = [
       Token (Name "use_list");
       Token (Name "scoped_use_list");
       Token (Name "use_wildcard");
-      Token (Name "ellipsis");
     |];
   );
   "use_declaration",
@@ -9567,36 +9563,26 @@ and trans_field_initializer ((kind, body) : mt) : CST.field_initializer =
   match body with
   | Children v ->
       (match v with
-      | Alt (0, v) ->
-          `Rep_attr_item_choice_id_COLON_exp (
-            (match v with
-            | Seq [v0; v1; v2; v3] ->
-                (
-                  Run.repeat
-                    (fun v -> trans_attribute_item (Run.matcher_token v))
-                    v0
-                  ,
-                  (match v1 with
-                  | Alt (0, v) ->
-                      `Id (
-                        trans_identifier (Run.matcher_token v)
-                      )
-                  | Alt (1, v) ->
-                      `Int_lit (
-                        trans_integer_literal (Run.matcher_token v)
-                      )
-                  | _ -> assert false
-                  )
-                  ,
-                  Run.trans_token (Run.matcher_token v2),
-                  trans_expression (Run.matcher_token v3)
+      | Seq [v0; v1; v2; v3] ->
+          (
+            Run.repeat
+              (fun v -> trans_attribute_item (Run.matcher_token v))
+              v0
+            ,
+            (match v1 with
+            | Alt (0, v) ->
+                `Id (
+                  trans_identifier (Run.matcher_token v)
+                )
+            | Alt (1, v) ->
+                `Int_lit (
+                  trans_integer_literal (Run.matcher_token v)
                 )
             | _ -> assert false
             )
-          )
-      | Alt (1, v) ->
-          `Ellips (
-            trans_ellipsis (Run.matcher_token v)
+            ,
+            Run.trans_token (Run.matcher_token v2),
+            trans_expression (Run.matcher_token v3)
           )
       | _ -> assert false
       )
@@ -13795,10 +13781,6 @@ and trans_use_clause ((kind, body) : mt) : CST.use_clause =
       | Alt (4, v) ->
           `Use_wild (
             trans_use_wildcard (Run.matcher_token v)
-          )
-      | Alt (5, v) ->
-          `Ellips (
-            trans_ellipsis (Run.matcher_token v)
           )
       | _ -> assert false
       )
