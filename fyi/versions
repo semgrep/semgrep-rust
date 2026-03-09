@@ -28,11 +28,13 @@ Last change in file:
 ---
 File: semgrep-grammars/src/semgrep-rust/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: e4706c226f0fab25af5da48fd138ca9aad3ec295
+Latest commit in repo: c869123493a655eeb61c380361f27b036fd71dc1
 Last change in file:
-  commit e4706c226f0fab25af5da48fd138ca9aad3ec295
-  Author: brandonspark <wu.brandonj@gmail.com>
-  Date:   Wed May 7 15:07:58 2025 -0700
+  commit 081eab2e83634c0bfb73d83dbc1edb3ad7f01280
+  Author: Max vonBlankenburg <137826054+Fidget-Grep@users.noreply.github.com>
+  Date:   Mon Feb 23 16:55:56 2026 -0800
   
-      fix rust
+      Revert "Rust support for ellipses inside struct initialization and use lists …" (#565)
+      
+      This reverts commit cb0541f1b9dc9bc224f49cddf4a6279360a373c6.
 ---
