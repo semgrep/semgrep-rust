@@ -110,6 +110,7 @@ module.exports = grammar({
     [$.array_expression],
     [$.visibility_modifier],
     [$.visibility_modifier, $.scoped_identifier, $.scoped_type_identifier],
+    [$.foreign_mod_item, $.function_modifiers],
   ],
 
   word: $ => $.identifier,
@@ -279,7 +280,7 @@ module.exports = grammar({
     ),
 
     foreign_mod_item: $ => seq(
-      optional($.visibility_modifier),
+      optional('unsafe'),
       $.extern_modifier,
       choice(
         ';',
@@ -1539,12 +1540,15 @@ module.exports = grammar({
     )),
 
     string_literal: $ => seq(
-      alias(/[bc]?"/, '"'),
+      choice(
+        '"',
+        alias(/[bc]"/, '"'),
+      ),
       repeat(choice(
         $.escape_sequence,
         $.string_content,
       )),
-      token.immediate('"'),
+      '"',
     ),
 
     raw_string_literal: $ => seq(
@@ -1651,6 +1655,7 @@ module.exports = grammar({
       'default',
       'union',
       'gen',
+      'raw',
     ), $.identifier),
 
     _type_identifier: $ => alias($.identifier, $.type_identifier),

@@ -10,33 +10,27 @@ open Tree_sitter_run
 
 type float_literal = Token.t
 
-type outer_block_doc_comment_marker = Token.t
-
-type imm_tok_dquot = Token.t (* "\"" *)
-
-type reserved_identifier = [
-    `Defa of Token.t (* "default" *)
-  | `Union of Token.t (* "union" *)
-  | `Gen of Token.t (* "gen" *)
-]
-
-type pat_eeda0f5 = Token.t (* pattern "[bc]?\"" *)
-
 type imm_tok_prec_p1_pat_4fd4a56 = Token.t (* pattern .* *)
+
+type imm_tok_prec_p2_pat_262ec39 = Token.t (* pattern \/\/ *)
 
 type char_literal = Token.t
 
-type string_content = Token.t
-
 type block_comment_content = Token.t
 
-type pat_1e84e62 = Token.t (* pattern [^+*?]+ *)
+type metavariable = Token.t (* pattern \$[a-zA-Z_]\w* *)
+
+type pat_4fd4a56 = Token.t (* pattern .* *)
 
 type anon_choice_PLUS_348fa54 = [
     `PLUS of Token.t (* "+" *)
   | `STAR of Token.t (* "*" *)
   | `QMARK of Token.t (* "?" *)
 ]
+
+type raw_string_literal_content = Token.t
+
+type string_content = Token.t
 
 type boolean_literal = [
     `True of Token.t (* "true" *)
@@ -45,16 +39,15 @@ type boolean_literal = [
 
 type block_comment_explicit = unit (* blank *)
 
-type imm_tok_prec_p2_pat_262ec39 = Token.t (* pattern \/\/ *)
+type outer_block_doc_comment_marker = Token.t
 
-type shebang = Token.t (* pattern #![\r\f\t\v ]*([^\[\n].*\
-  )?\n *)
+type inner_block_doc_comment_marker = Token.t
 
-type pat_4fd4a56 = Token.t (* pattern .* *)
+type line_doc_content = Token.t
+
+type pat_a3a04ed = Token.t (* pattern "[bc]\"" *)
 
 type raw_string_literal_start = Token.t
-
-type raw_string_literal_end = Token.t
 
 type anon_choice_u8_6dad923 = [
     `U8 of Token.t (* "u8" *)
@@ -94,37 +87,56 @@ type fragment_specifier = [
   | `Vis of Token.t (* "vis" *)
 ]
 
-type raw_string_literal_content = Token.t
-
-type escape_sequence = Token.t
-
-type tok_prec_p1_lt = Token.t
-
-type inner_block_doc_comment_marker = Token.t
-
-type line_doc_content = Token.t
-
-type metavariable = Token.t (* pattern \$[a-zA-Z_]\w* *)
-
 type line_comment_explicit = unit (* blank *)
+
+type reserved_identifier = [
+    `Defa of Token.t (* "default" *)
+  | `Union of Token.t (* "union" *)
+  | `Gen of Token.t (* "gen" *)
+  | `Raw of Token.t (* "raw" *)
+]
+
+type raw_string_literal_end = Token.t
 
 type integer_literal = Token.t
 
+type tok_prec_p1_lt = Token.t
+
+type escape_sequence = Token.t
+
+type pat_1e84e62 = Token.t (* pattern [^+*?]+ *)
+
+type shebang = Token.t (* pattern #![\r\f\t\v ]*([^\[\n].*\
+  )?\n *)
+
 type identifier = Token.t
+
+type block_doc_comment_marker = [
+    `Outer_blk_doc_comm_marker of outer_block_doc_comment_marker (*tok*)
+  | `Inner_blk_doc_comm_marker of inner_block_doc_comment_marker (*tok*)
+]
 
 type raw_string_literal = (
     raw_string_literal_start (*tok*) * raw_string_literal_content (*tok*)
   * raw_string_literal_end (*tok*)
 )
 
+type negative_literal = (
+    Token.t (* "-" *)
+  * [
+        `Int_lit of integer_literal (*tok*)
+      | `Float_lit of float_literal (*tok*)
+    ]
+)
+
 type string_literal = (
-    pat_eeda0f5
+    [ `DQUOT of Token.t (* "\"" *) | `Pat_a3a04ed of pat_a3a04ed ]
   * [
         `Esc_seq of escape_sequence (*tok*)
       | `Str_content of string_content (*tok*)
     ]
       list (* zero or more *)
-  * imm_tok_dquot (*tok*)
+  * Token.t (* "\"" *)
 )
 
 type line_doc_comment_marker = [
@@ -137,17 +149,17 @@ type anon_choice_const_f077f79 = [
   | `Muta_spec of Token.t (* "mut" *)
 ]
 
-type block_doc_comment_marker = [
-    `Outer_blk_doc_comm_marker of outer_block_doc_comment_marker (*tok*)
-  | `Inner_blk_doc_comm_marker of inner_block_doc_comment_marker (*tok*)
-]
-
-type negative_literal = (
-    Token.t (* "-" *)
+type block_comment = (
+    Token.t (* "/*" *)
   * [
-        `Int_lit of integer_literal (*tok*)
-      | `Float_lit of float_literal (*tok*)
+        `Blk_doc_comm_marker_opt_blk_comm_content of (
+            block_doc_comment_marker
+          * block_comment_content (*tok*) option
+        )
+      | `Blk_comm_content of block_comment_content (*tok*)
     ]
+      option
+  * Token.t (* "*/" *)
 )
 
 type extern_modifier = (Token.t (* "extern" *) * string_literal option)
@@ -159,6 +171,16 @@ type literal = [
   | `Bool_lit of boolean_literal
   | `Int_lit of integer_literal (*tok*)
   | `Float_lit of float_literal (*tok*)
+]
+
+type literal_pattern = [
+    `Str_lit of string_literal
+  | `Raw_str_lit of raw_string_literal
+  | `Char_lit of char_literal (*tok*)
+  | `Bool_lit of boolean_literal
+  | `Int_lit of integer_literal (*tok*)
+  | `Float_lit of float_literal (*tok*)
+  | `Nega_lit of negative_literal
 ]
 
 type line_comment = (
@@ -174,29 +196,6 @@ type line_comment = (
     ]
 )
 
-type block_comment = (
-    Token.t (* "/*" *)
-  * [
-        `Blk_doc_comm_marker_opt_blk_comm_content of (
-            block_doc_comment_marker
-          * block_comment_content (*tok*) option
-        )
-      | `Blk_comm_content of block_comment_content (*tok*)
-    ]
-      option
-  * Token.t (* "*/" *)
-)
-
-type literal_pattern = [
-    `Str_lit of string_literal
-  | `Raw_str_lit of raw_string_literal
-  | `Char_lit of char_literal (*tok*)
-  | `Bool_lit of boolean_literal
-  | `Int_lit of integer_literal (*tok*)
-  | `Float_lit of float_literal (*tok*)
-  | `Nega_lit of negative_literal
-]
-
 type anon_choice_field_id_f2cdd14 = [
     `Id of identifier (*tok*)
   | `Int_lit of integer_literal (*tok*)
@@ -207,9 +206,9 @@ type anon_choice_field_id_8184947 = [
   | `Meta of metavariable (*tok*)
 ]
 
-type label = (Token.t (* "'" *) * identifier (*tok*))
-
 type lifetime = (Token.t (* "'" *) * identifier (*tok*))
+
+type label = (Token.t (* "'" *) * identifier (*tok*))
 
 type function_modifiers =
   [
@@ -330,6 +329,38 @@ type non_delim_token = [
   | `DOLLAR of Token.t (* "$" *)
 ]
 
+type token_tree = [
+    `LPAR_rep_choice_tok_tree_RPAR of (
+        Token.t (* "(" *)
+      * tokens list (* zero or more *)
+      * Token.t (* ")" *)
+    )
+  | `LBRACK_rep_choice_tok_tree_RBRACK of (
+        Token.t (* "[" *)
+      * tokens list (* zero or more *)
+      * Token.t (* "]" *)
+    )
+  | `LCURL_rep_choice_tok_tree_RCURL of (
+        Token.t (* "{" *)
+      * tokens list (* zero or more *)
+      * Token.t (* "}" *)
+    )
+]
+
+and tokens = [
+    `Tok_tree of token_tree
+  | `Tok_repe of (
+        Token.t (* "$" *)
+      * Token.t (* "(" *)
+      * tokens list (* zero or more *)
+      * Token.t (* ")" *)
+      * pat_1e84e62 option
+      * anon_choice_PLUS_348fa54
+    )
+  | `Meta of metavariable (*tok*)
+  | `Choice_choice_lit of non_special_token
+]
+
 type token_pattern = [
     `Tok_tree_pat of token_tree_pattern
   | `Tok_repe_pat of (
@@ -363,38 +394,6 @@ and token_tree_pattern = [
       * token_pattern list (* zero or more *)
       * Token.t (* "}" *)
     )
-]
-
-type token_tree = [
-    `LPAR_rep_choice_tok_tree_RPAR of (
-        Token.t (* "(" *)
-      * tokens list (* zero or more *)
-      * Token.t (* ")" *)
-    )
-  | `LBRACK_rep_choice_tok_tree_RBRACK of (
-        Token.t (* "[" *)
-      * tokens list (* zero or more *)
-      * Token.t (* "]" *)
-    )
-  | `LCURL_rep_choice_tok_tree_RCURL of (
-        Token.t (* "{" *)
-      * tokens list (* zero or more *)
-      * Token.t (* "}" *)
-    )
-]
-
-and tokens = [
-    `Tok_tree of token_tree
-  | `Tok_repe of (
-        Token.t (* "$" *)
-      * Token.t (* "(" *)
-      * tokens list (* zero or more *)
-      * Token.t (* ")" *)
-      * pat_1e84e62 option
-      * anon_choice_PLUS_348fa54
-    )
-  | `Meta of metavariable (*tok*)
-  | `Choice_choice_lit of non_special_token
 ]
 
 type delim_token_tree = [
@@ -1028,7 +1027,7 @@ and field_initializer_list = (
 )
 
 and foreign_mod_item = (
-    visibility_modifier option
+    Token.t (* "unsafe" *) option
   * extern_modifier
   * anon_choice_SEMI_226cc40
 )
@@ -1639,27 +1638,27 @@ type source_file = [
     )
 ]
 
-type never_type (* inlined *) = Token.t (* "!" *)
+type outer_line_doc_comment_marker (* inlined *) = Token.t (* "/" *)
+
+type self (* inlined *) = Token.t (* "self" *)
 
 type crate (* inlined *) = Token.t (* "crate" *)
 
 type unit_type (* inlined *) = (Token.t (* "(" *) * Token.t (* ")" *))
 
-type unit_expression (* inlined *) = (Token.t (* "(" *) * Token.t (* ")" *))
+type super (* inlined *) = Token.t (* "super" *)
 
 type error_sentinel (* inlined *) = Token.t
 
-type self (* inlined *) = Token.t (* "self" *)
+type unit_expression (* inlined *) = (Token.t (* "(" *) * Token.t (* ")" *))
 
 type ellipsis (* inlined *) = Token.t (* "..." *)
 
 type remaining_field_pattern (* inlined *) = Token.t (* ".." *)
 
+type never_type (* inlined *) = Token.t (* "!" *)
+
 type inner_line_doc_comment_marker (* inlined *) = Token.t (* "!" *)
-
-type super (* inlined *) = Token.t (* "super" *)
-
-type outer_line_doc_comment_marker (* inlined *) = Token.t (* "/" *)
 
 type mutable_specifier (* inlined *) = Token.t (* "mut" *)
 
@@ -1678,14 +1677,9 @@ type field_identifier (* inlined *) = identifier (*tok*)
 
 type type_identifier (* inlined *) = identifier (*tok*)
 
-type dummy_alias1 (* inlined *) = line_comment
-
 type dummy_alias0 (* inlined *) = block_comment
 
-type continue_expression (* inlined *) = (
-    Token.t (* "continue" *)
-  * label option
-)
+type dummy_alias1 (* inlined *) = line_comment
 
 type self_parameter (* inlined *) = (
     Token.t (* "&" *) option
@@ -1694,19 +1688,24 @@ type self_parameter (* inlined *) = (
   * Token.t (* "self" *)
 )
 
-type token_repetition_pattern (* inlined *) = (
-    Token.t (* "$" *)
-  * Token.t (* "(" *)
-  * token_pattern list (* zero or more *)
-  * Token.t (* ")" *)
-  * pat_1e84e62 option
-  * anon_choice_PLUS_348fa54
+type continue_expression (* inlined *) = (
+    Token.t (* "continue" *)
+  * label option
 )
 
 type token_repetition (* inlined *) = (
     Token.t (* "$" *)
   * Token.t (* "(" *)
   * tokens list (* zero or more *)
+  * Token.t (* ")" *)
+  * pat_1e84e62 option
+  * anon_choice_PLUS_348fa54
+)
+
+type token_repetition_pattern (* inlined *) = (
+    Token.t (* "$" *)
+  * Token.t (* "(" *)
+  * token_pattern list (* zero or more *)
   * Token.t (* ")" *)
   * pat_1e84e62 option
   * anon_choice_PLUS_348fa54
@@ -2046,13 +2045,13 @@ type while_expression (* inlined *) = (
   * block
 )
 
-type semgrep_expression (* inlined *) = (
-    Token.t (* "__SEMGREP_EXPRESSION" *) * expression
-)
-
 type semgrep_statement (* inlined *) = (
     Token.t (* "__SEMGREP_STATEMENT" *)
   * statement list (* one or more *)
+)
+
+type semgrep_expression (* inlined *) = (
+    Token.t (* "__SEMGREP_EXPRESSION" *) * expression
 )
 
 type extra = [
