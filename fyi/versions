@@ -2,23 +2,15 @@ File: semgrep-grammars/src/tree-sitter-rust/LICENSE
 Git repo name: tree-sitter-rust
 Latest commit in repo: 8a1ccae7aaccdc11b04dbd803453e3e9cfd9159b
 Last change in file:
-  commit 261b20226c04ef601adbdf185a800512a5f66291
-  Author: Vanessa <88671600+vanessa-rodrigues@users.noreply.github.com>
-  Date:   Mon Oct 6 12:16:35 2025 -0300
+  commit 79f3003ca601783a6cff3c03fce75523298d64fa
+  Author: Maxim Sokolov <maxim0xff@gmail.com>
+  Date:   Wed Mar 29 14:32:36 2017 +0300
   
-      Raw reference/identifier conflict (#288)
+      Init
       
-      * Raw reference/identifier conflict
-      
-      * Added test
-      
-      * Regenerate with cli v0.25.10
-      
-      * Upgrade tree-sitter dependency on node bindings
-      
-      * Upgrade tree-sitter dependency for Swift
-      
-      * Unsafe foreign_mod_item and CI updates
+      Based on
+      https://github.com/tree-sitter/tree-sitter-javascript
+      https://github.com/tree-sitter/tree-sitter-go
 ---
 File: semgrep-grammars/src/tree-sitter-rust/grammar.js
 Git repo name: tree-sitter-rust
@@ -51,14 +43,30 @@ Last change in file:
       Co-authored-by: Christopher Biscardi <chris@christopherbiscardi.com>
 ---
 File: semgrep-grammars/src/semgrep-rust/grammar.js
-Git repo name: ocaml-tree-sitter-semgrep
-Latest commit in repo: e0703702894b0da3912fca7f353fa5c2e10396b7
+Git repo name: agent-a6b0bf3b104a0ac50
+Latest commit in repo: b9c3b2f218b7c7a7fa02720cc11260b7fe27936c
 Last change in file:
-  commit 081eab2e83634c0bfb73d83dbc1edb3ad7f01280
-  Author: Max vonBlankenburg <137826054+Fidget-Grep@users.noreply.github.com>
-  Date:   Mon Feb 23 16:55:56 2026 -0800
+  commit b9c3b2f218b7c7a7fa02720cc11260b7fe27936c
+  Author: brandonspark <brandon@semgrep.com>
+  Date:   Wed Apr 29 17:33:23 2026 -0700
   
-      Revert "Rust support for ellipses inside struct initialization and use lists …" (#565)
+      fix(rust): augment tuple_pattern, use_list, and struct expression for Semgrep
       
-      This reverts commit cb0541f1b9dc9bc224f49cddf4a6279360a373c6.
+      Extend the Rust Semgrep grammar so common Semgrep idioms parse cleanly:
+      
+      - LANG-479: allow `$.ellipsis` inside `tuple_pattern` (e.g. `let ($X, ...) = e;`)
+        and inside `use_list` (e.g. `use foo::{...};`).
+      - LANG-495: widen `field_initializer_list` to accept `$.ellipsis` and a bare
+        `..` rest marker, so patterns like `Foo { x: 1, ... }` and `Foo { x, .. }`
+        parse (base Rust requires `..base`; Semgrep needs the bareword form).
+      
+      Mirrors the existing in-place augmentation precedent (`field_declaration`,
+      `_declaration_statement`). No new conflict entries needed; all 169 corpus
+      tests pass, including 5 new ones covering the repros from both tickets.
+      
+      LANG-487 (standalone-type entry point) is deferred — it requires a new
+      `__SEMGREP_TYPE` entry point and OCaml-side plumbing
+      (scanner-or-entrypoint), out of scope for an augmentation-only fix.
+      
+      Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
 ---

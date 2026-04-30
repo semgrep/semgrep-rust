@@ -1236,16 +1236,6 @@ and map_anon_choice_param_2c23cdc (env : env) (x : CST.anon_choice_param_2c23cdc
     )
   )
 
-and map_anon_choice_pat_17a3e23 (env : env) (x : CST.anon_choice_pat_17a3e23) =
-  (match x with
-  | `Pat x -> R.Case ("Pat",
-      map_pattern env x
-    )
-  | `Clos_exp x -> R.Case ("Clos_exp",
-      map_closure_expression env x
-    )
-  )
-
 and map_anon_choice_pat_4717dcc (env : env) (x : CST.anon_choice_pat_4717dcc) =
   (match x with
   | `Pat x -> R.Case ("Pat",
@@ -1256,7 +1246,20 @@ and map_anon_choice_pat_4717dcc (env : env) (x : CST.anon_choice_pat_4717dcc) =
     )
   )
 
-and map_anon_choice_shor_field_init_9cb4441 (env : env) (x : CST.anon_choice_shor_field_init_9cb4441) =
+and map_anon_choice_pat_e83c9e1 (env : env) (x : CST.anon_choice_pat_e83c9e1) =
+  (match x with
+  | `Pat x -> R.Case ("Pat",
+      map_pattern env x
+    )
+  | `Clos_exp x -> R.Case ("Clos_exp",
+      map_closure_expression env x
+    )
+  | `Ellips tok -> R.Case ("Ellips",
+      (* "..." *) token env tok
+    )
+  )
+
+and map_anon_choice_shor_field_init_39fb75b (env : env) (x : CST.anon_choice_shor_field_init_39fb75b) =
   (match x with
   | `Shor_field_init (v1, v2) -> R.Case ("Shor_field_init",
       let v1 = R.List (List.map (map_attribute_item env) v1) in
@@ -1272,6 +1275,12 @@ and map_anon_choice_shor_field_init_9cb4441 (env : env) (x : CST.anon_choice_sho
     )
   | `Base_field_init x -> R.Case ("Base_field_init",
       map_base_field_initializer env x
+    )
+  | `Ellips tok -> R.Case ("Ellips",
+      (* "..." *) token env tok
+    )
+  | `DOTDOT tok -> R.Case ("DOTDOT",
+      (* ".." *) token env tok
     )
   )
 
@@ -1314,6 +1323,16 @@ and map_anon_choice_type_39799c3 (env : env) (x : CST.anon_choice_type_39799c3) 
     )
   | `Blk x -> R.Case ("Blk",
       map_block env x
+    )
+  )
+
+and map_anon_choice_use_clause_d55a6b7 (env : env) (x : CST.anon_choice_use_clause_d55a6b7) =
+  (match x with
+  | `Use_clause x -> R.Case ("Use_clause",
+      map_use_clause env x
+    )
+  | `Ellips tok -> R.Case ("Ellips",
+      (* "..." *) token env tok
     )
   )
 
@@ -2413,11 +2432,11 @@ and map_field_initializer_list (env : env) ((v1, v2, v3, v4) : CST.field_initial
   let v2 =
     (match v2 with
     | Some (v1, v2) -> R.Option (Some (
-        let v1 = map_anon_choice_shor_field_init_9cb4441 env v1 in
+        let v1 = map_anon_choice_shor_field_init_39fb75b env v1 in
         let v2 =
           R.List (List.map (fun (v1, v2) ->
             let v1 = (* "," *) token env v1 in
-            let v2 = map_anon_choice_shor_field_init_9cb4441 env v2 in
+            let v2 = map_anon_choice_shor_field_init_39fb75b env v2 in
             R.Tuple [v1; v2]
           ) v2)
         in
@@ -3036,11 +3055,11 @@ and map_pattern (env : env) (x : CST.pattern) =
       let v2 =
         (match v2 with
         | Some (v1, v2) -> R.Option (Some (
-            let v1 = map_anon_choice_pat_17a3e23 env v1 in
+            let v1 = map_anon_choice_pat_e83c9e1 env v1 in
             let v2 =
               R.List (List.map (fun (v1, v2) ->
                 let v1 = (* "," *) token env v1 in
-                let v2 = map_anon_choice_pat_17a3e23 env v2 in
+                let v2 = map_anon_choice_pat_e83c9e1 env v2 in
                 R.Tuple [v1; v2]
               ) v2)
             in
@@ -3865,23 +3884,11 @@ and map_use_list (env : env) ((v1, v2, v3, v4) : CST.use_list) =
   let v2 =
     (match v2 with
     | Some (v1, v2) -> R.Option (Some (
-        let v1 =
-          (match v1 with
-          | `Use_clause x -> R.Case ("Use_clause",
-              map_use_clause env x
-            )
-          )
-        in
+        let v1 = map_anon_choice_use_clause_d55a6b7 env v1 in
         let v2 =
           R.List (List.map (fun (v1, v2) ->
             let v1 = (* "," *) token env v1 in
-            let v2 =
-              (match v2 with
-              | `Use_clause x -> R.Case ("Use_clause",
-                  map_use_clause env x
-                )
-              )
-            in
+            let v2 = map_anon_choice_use_clause_d55a6b7 env v2 in
             R.Tuple [v1; v2]
           ) v2)
         in

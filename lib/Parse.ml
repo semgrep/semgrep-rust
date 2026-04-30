@@ -1995,6 +1995,8 @@ let children_regexps : (string * Run.exp option) list = [
             Token (Name "shorthand_field_initializer");
             Token (Name "field_initializer");
             Token (Name "base_field_initializer");
+            Token (Name "ellipsis");
+            Token (Literal "..");
           |];
           Repeat (
             Seq [
@@ -2003,6 +2005,8 @@ let children_regexps : (string * Run.exp option) list = [
                 Token (Name "shorthand_field_initializer");
                 Token (Name "field_initializer");
                 Token (Name "base_field_initializer");
+                Token (Name "ellipsis");
+                Token (Literal "..");
               |];
             ];
           );
@@ -3335,6 +3339,7 @@ let children_regexps : (string * Run.exp option) list = [
           Alt [|
             Token (Name "pattern");
             Token (Name "closure_expression");
+            Token (Name "ellipsis");
           |];
           Repeat (
             Seq [
@@ -3342,6 +3347,7 @@ let children_regexps : (string * Run.exp option) list = [
               Alt [|
                 Token (Name "pattern");
                 Token (Name "closure_expression");
+                Token (Name "ellipsis");
               |];
             ];
           );
@@ -3696,12 +3702,14 @@ let children_regexps : (string * Run.exp option) list = [
         Seq [
           Alt [|
             Token (Name "use_clause");
+            Token (Name "ellipsis");
           |];
           Repeat (
             Seq [
               Token (Literal ",");
               Alt [|
                 Token (Name "use_clause");
+                Token (Name "ellipsis");
               |];
             ];
           );
@@ -9650,6 +9658,14 @@ and trans_field_initializer_list ((kind, body) : mt) : CST.field_initializer_lis
                           `Base_field_init (
                             trans_base_field_initializer (Run.matcher_token v)
                           )
+                      | Alt (3, v) ->
+                          `Ellips (
+                            trans_ellipsis (Run.matcher_token v)
+                          )
+                      | Alt (4, v) ->
+                          `DOTDOT (
+                            Run.trans_token (Run.matcher_token v)
+                          )
                       | _ -> assert false
                       )
                       ,
@@ -9671,6 +9687,14 @@ and trans_field_initializer_list ((kind, body) : mt) : CST.field_initializer_lis
                                 | Alt (2, v) ->
                                     `Base_field_init (
                                       trans_base_field_initializer (Run.matcher_token v)
+                                    )
+                                | Alt (3, v) ->
+                                    `Ellips (
+                                      trans_ellipsis (Run.matcher_token v)
+                                    )
+                                | Alt (4, v) ->
+                                    `DOTDOT (
+                                      Run.trans_token (Run.matcher_token v)
                                     )
                                 | _ -> assert false
                                 )
@@ -12990,6 +13014,10 @@ and trans_tuple_pattern ((kind, body) : mt) : CST.tuple_pattern =
                           `Clos_exp (
                             trans_closure_expression (Run.matcher_token v)
                           )
+                      | Alt (2, v) ->
+                          `Ellips (
+                            trans_ellipsis (Run.matcher_token v)
+                          )
                       | _ -> assert false
                       )
                       ,
@@ -13007,6 +13035,10 @@ and trans_tuple_pattern ((kind, body) : mt) : CST.tuple_pattern =
                                 | Alt (1, v) ->
                                     `Clos_exp (
                                       trans_closure_expression (Run.matcher_token v)
+                                    )
+                                | Alt (2, v) ->
+                                    `Ellips (
+                                      trans_ellipsis (Run.matcher_token v)
                                     )
                                 | _ -> assert false
                                 )
@@ -13906,6 +13938,10 @@ and trans_use_list ((kind, body) : mt) : CST.use_list =
                           `Use_clause (
                             trans_use_clause (Run.matcher_token v)
                           )
+                      | Alt (1, v) ->
+                          `Ellips (
+                            trans_ellipsis (Run.matcher_token v)
+                          )
                       | _ -> assert false
                       )
                       ,
@@ -13919,6 +13955,10 @@ and trans_use_list ((kind, body) : mt) : CST.use_list =
                                 | Alt (0, v) ->
                                     `Use_clause (
                                       trans_use_clause (Run.matcher_token v)
+                                    )
+                                | Alt (1, v) ->
+                                    `Ellips (
+                                      trans_ellipsis (Run.matcher_token v)
                                     )
                                 | _ -> assert false
                                 )

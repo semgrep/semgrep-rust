@@ -547,14 +547,15 @@ and anon_choice_param_2c23cdc = [
   | `Type of type_
 ]
 
-and anon_choice_pat_17a3e23 = [
-    `Pat of pattern
-  | `Clos_exp of closure_expression
-]
-
 and anon_choice_pat_4717dcc = [ `Pat of pattern | `Param of parameter ]
 
-and anon_choice_shor_field_init_9cb4441 = [
+and anon_choice_pat_e83c9e1 = [
+    `Pat of pattern
+  | `Clos_exp of closure_expression
+  | `Ellips of Token.t (* "..." *)
+]
+
+and anon_choice_shor_field_init_39fb75b = [
     `Shor_field_init of (
         attribute_item list (* zero or more *)
       * identifier (*tok*)
@@ -566,6 +567,8 @@ and anon_choice_shor_field_init_9cb4441 = [
       * expression
     )
   | `Base_field_init of base_field_initializer
+  | `Ellips of Token.t (* "..." *)
+  | `DOTDOT of Token.t (* ".." *)
 ]
 
 and anon_choice_type_10b2b37 = [
@@ -585,6 +588,11 @@ and anon_choice_type_39799c3 = [
   | `Life of lifetime
   | `Lit of literal
   | `Blk of block
+]
+
+and anon_choice_use_clause_d55a6b7 = [
+    `Use_clause of use_clause
+  | `Ellips of Token.t (* "..." *)
 ]
 
 and anon_opt_rep_attr_item_exp_rep_COMMA_rep_attr_item_exp_3d9e0d4 =
@@ -1017,8 +1025,8 @@ and field_expression = (
 and field_initializer_list = (
     Token.t (* "{" *)
   * (
-        anon_choice_shor_field_init_9cb4441
-      * (Token.t (* "," *) * anon_choice_shor_field_init_9cb4441)
+        anon_choice_shor_field_init_39fb75b
+      * (Token.t (* "," *) * anon_choice_shor_field_init_39fb75b)
           list (* zero or more *)
     )
       option
@@ -1256,8 +1264,8 @@ and pattern = [
   | `Tuple_pat of (
         Token.t (* "(" *)
       * (
-            anon_choice_pat_17a3e23
-          * (Token.t (* "," *) * anon_choice_pat_17a3e23)
+            anon_choice_pat_e83c9e1
+          * (Token.t (* "," *) * anon_choice_pat_e83c9e1)
               list (* zero or more *)
         )
           option
@@ -1568,8 +1576,8 @@ and use_declaration = (
 and use_list = (
     Token.t (* "{" *)
   * (
-        [ `Use_clause of use_clause ]
-      * (Token.t (* "," *) * [ `Use_clause of use_clause ])
+        anon_choice_use_clause_d55a6b7
+      * (Token.t (* "," *) * anon_choice_use_clause_d55a6b7)
           list (* zero or more *)
     )
       option
@@ -1975,8 +1983,8 @@ type tuple_expression (* inlined *) = (
 type tuple_pattern (* inlined *) = (
     Token.t (* "(" *)
   * (
-        anon_choice_pat_17a3e23
-      * (Token.t (* "," *) * anon_choice_pat_17a3e23) list (* zero or more *)
+        anon_choice_pat_e83c9e1
+      * (Token.t (* "," *) * anon_choice_pat_e83c9e1) list (* zero or more *)
     )
       option
   * Token.t (* "," *) option
