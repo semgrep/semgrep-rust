@@ -3091,12 +3091,15 @@ let children_regexps : (string * Run.exp option) list = [
   );
   "shorthand_field_initializer",
   Some (
-    Seq [
-      Repeat (
-        Token (Name "attribute_item");
-      );
-      Token (Name "identifier");
-    ];
+    Alt [|
+      Seq [
+        Repeat (
+          Token (Name "attribute_item");
+        );
+        Token (Name "identifier");
+      ];
+      Token (Name "ellipsis");
+    |];
   );
   "slice_pattern",
   Some (
@@ -12454,13 +12457,23 @@ and trans_shorthand_field_initializer ((kind, body) : mt) : CST.shorthand_field_
   match body with
   | Children v ->
       (match v with
-      | Seq [v0; v1] ->
-          (
-            Run.repeat
-              (fun v -> trans_attribute_item (Run.matcher_token v))
-              v0
-            ,
-            trans_identifier (Run.matcher_token v1)
+      | Alt (0, v) ->
+          `Rep_attr_item_id (
+            (match v with
+            | Seq [v0; v1] ->
+                (
+                  Run.repeat
+                    (fun v -> trans_attribute_item (Run.matcher_token v))
+                    v0
+                  ,
+                  trans_identifier (Run.matcher_token v1)
+                )
+            | _ -> assert false
+            )
+          )
+      | Alt (1, v) ->
+          `Ellips (
+            trans_ellipsis (Run.matcher_token v)
           )
       | _ -> assert false
       )

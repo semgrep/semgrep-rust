@@ -1258,10 +1258,8 @@ and map_anon_choice_pat_4717dcc (env : env) (x : CST.anon_choice_pat_4717dcc) =
 
 and map_anon_choice_shor_field_init_9cb4441 (env : env) (x : CST.anon_choice_shor_field_init_9cb4441) =
   (match x with
-  | `Shor_field_init (v1, v2) -> R.Case ("Shor_field_init",
-      let v1 = R.List (List.map (map_attribute_item env) v1) in
-      let v2 = (* identifier *) token env v2 in
-      R.Tuple [v1; v2]
+  | `Shor_field_init x -> R.Case ("Shor_field_init",
+      map_shorthand_field_initializer env x
     )
   | `Field_init (v1, v2, v3, v4) -> R.Case ("Field_init",
       let v1 = R.List (List.map (map_attribute_item env) v1) in
@@ -3395,6 +3393,18 @@ and map_semgrep_typed_metavar (env : env) ((v1, v2, v3) : CST.semgrep_typed_meta
   let v2 = (* ":" *) token env v2 in
   let v3 = map_type_ env v3 in
   R.Tuple [v1; v2; v3]
+
+and map_shorthand_field_initializer (env : env) (x : CST.shorthand_field_initializer) =
+  (match x with
+  | `Rep_attr_item_id (v1, v2) -> R.Case ("Rep_attr_item_id",
+      let v1 = R.List (List.map (map_attribute_item env) v1) in
+      let v2 = (* identifier *) token env v2 in
+      R.Tuple [v1; v2]
+    )
+  | `Ellips tok -> R.Case ("Ellips",
+      (* "..." *) token env tok
+    )
+  )
 
 and map_statement (env : env) (x : CST.statement) =
   (match x with

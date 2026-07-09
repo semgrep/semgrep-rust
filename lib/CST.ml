@@ -555,10 +555,7 @@ and anon_choice_pat_17a3e23 = [
 and anon_choice_pat_4717dcc = [ `Pat of pattern | `Param of parameter ]
 
 and anon_choice_shor_field_init_9cb4441 = [
-    `Shor_field_init of (
-        attribute_item list (* zero or more *)
-      * identifier (*tok*)
-    )
+    `Shor_field_init of shorthand_field_initializer
   | `Field_init of (
         attribute_item list (* zero or more *)
       * anon_choice_field_id_f2cdd14
@@ -1399,6 +1396,14 @@ and scoped_type_identifier_in_expression_position = (
 
 and semgrep_typed_metavar = (identifier (*tok*) * Token.t (* ":" *) * type_)
 
+and shorthand_field_initializer = [
+    `Rep_attr_item_id of (
+        attribute_item list (* zero or more *)
+      * identifier (*tok*)
+    )
+  | `Ellips of Token.t (* "..." *)
+]
+
 and statement = [
     `Exp_stmt of expression_statement
   | `Choice_choice_const_item of declaration_statement
@@ -1921,11 +1926,6 @@ type scoped_use_list (* inlined *) = (
     path option
   * Token.t (* "::" *)
   * use_list
-)
-
-type shorthand_field_initializer (* inlined *) = (
-    attribute_item list (* zero or more *)
-  * identifier (*tok*)
 )
 
 type slice_pattern (* inlined *) = (
